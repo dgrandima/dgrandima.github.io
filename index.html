@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VisaTracker — Australian Student Visa Processing Times</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f5f3ee;
+      --surface: #ffffff;
+      --surface2: #f0ede6;
+      --border: rgba(0,0,0,0.1);
+      --text: #1a1814;
+      --text-muted: #6b6660;
+      --text-hint: #9e9890;
+      --accent: #1b4f8a;
+      --accent-light: #e8f0fb;
+      --accent-mid: #4a80c4;
+      --green: #2d6a4f;
+      --green-light: #d8f3dc;
+      --amber: #7d4e00;
+      --amber-light: #fff3cd;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* HEADER */
+    header {
+      background: var(--accent);
+      color: #fff;
+      padding: 0 2rem;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 0;
+    }
+    .logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      letter-spacing: -0.01em;
+      color: #fff;
+    }
+    .logo span { color: #7eb3f5; }
+    .header-sub { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 2px; }
+    .header-badge {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 99px;
+      padding: 4px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.85);
+    }
+
+    /* HERO */
+    .hero {
+      background: var(--accent);
+      color: #fff;
+      padding: 3rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(2rem, 5vw, 3rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      max-width: 700px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero p {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.75);
+      max-width: 520px;
+      margin: 0 auto 2rem;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat-val {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      line-height: 1;
+      color: #fff;
+    }
+    .hero-stat-label { font-size: 12px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+
+    /* MAIN */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* TABS */
+    .tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .tab-btn {
+      padding: 10px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      border-radius: 0;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* CARD */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .card-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+      color: var(--text);
+    }
+    .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 1.5rem; }
+
+    /* FORM */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group.full { grid-column: span 2; }
+    label { font-size: 13px; font-weight: 500; color: var(--text-muted); }
+    select, input[type="date"] {
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: var(--surface2);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    select:focus, input[type="date"]:focus { border-color: var(--accent-mid); }
+
+    .submit-btn {
+      margin-top: 1.25rem;
+      width: 100%;
+      padding: 12px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .submit-btn:hover { background: #153d6e; }
+    .submit-btn:active { transform: scale(0.99); }
+
+    .success-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: var(--green-light);
+      color: var(--green);
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .error-msg {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: #fde8e8;
+      color: #b91c1c;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+    }
+
+    /* METRICS */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 1.75rem;
+    }
+    .metric-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem 1.25rem;
+    }
+    .metric-label { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; }
+    .metric-value { font-family: 'DM Serif Display', serif; font-size: 2rem; font-weight: 400; color: var(--text); line-height: 1; }
+    .metric-sub { font-size: 11px; color: var(--text-hint); margin-top: 4px; }
+
+    /* CHARTS */
+    .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.5rem; }
+    .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; }
+    .chart-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 12px; }
+    .chart-wrap { position: relative; width: 100%; height: 220px; }
+    .chart-wrap-wide { position: relative; width: 100%; height: 180px; }
+
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px; }
+    .legend-item { display: flex; align-items: center; gap: 5px; font-size: 12px; color: var(--text-muted); }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    /* TABLE */
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th { text-align: left; padding: 10px 12px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--border); background: var(--surface2); font-size: 12px; }
+    td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text); }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--surface2); }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-granted { background: var(--green-light); color: var(--green); }
+    .badge-pending { background: var(--amber-light); color: var(--amber); }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 3rem; color: var(--text-hint); font-size: 14px; }
+    .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 12px;
+      color: var(--text-hint);
+      border-top: 1px solid var(--border);
+      margin-top: 2rem;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 700px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .form-group.full { grid-column: span 1; }
+      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 1.25rem; }
+      .header-badge { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="logo">Visa<span>Tracker</span></div>
+      <div class="header-sub">Real data from real applicants</div>
+    </div>
+    <div class="header-badge">Australia 🇦🇺</div>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>How long is your student visa taking?</h1>
+  <p>A community-powered tracker. Share your experience and see real processing times from other Australian student visa applicants.</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="hero-total">0</div>
+      <div class="hero-stat-label">Total submissions</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="hero-avg">—</div>
+      <div class="hero-stat-label">Avg days (granted)</div>
+    </div>
+    <div class="hero-stat">
+      <div class="hero-stat-val" id="hero-countries">—</div>
+      <div class="hero-stat-label">Countries represented</div>
+    </div>
+  </div>
+</section>
+
+<main>
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('submit', this)">Submit my data</button>
+    <button class="tab-btn" onclick="switchTab('analytics', this)">Analytics</button>
+    <button class="tab-btn" onclick="switchTab('entries', this)">All entries</button>
+  </div>
+
+  <!-- SUBMIT TAB -->
+  <div id="tab-submit">
+    <div class="card">
+      <div class="card-title">Share your visa experience</div>
+      <div class="card-desc">Your data helps other students understand real processing times. All submissions are anonymous.</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="subclass">Visa subclass</label>
+          <select id="subclass">
+            <option value="">Select subclass</option>
+            <option value="500">500 — Student</option>
+            <option value="485">485 — Graduate Temporary</option>
+            <option value="590">590 — Student Guardian</option>
+            <option value="407">407 — Training</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="country">Country of origin</label>
+          <select id="country">
+            <option value="">Select country</option>
+            <option>India</option><option>China</option><option>Nepal</option>
+            <option>Philippines</option><option>Vietnam</option><option>Pakistan</option>
+            <option>Sri Lanka</option><option>Bangladesh</option><option>South Korea</option>
+            <option>Thailand</option><option>Indonesia</option><option>Malaysia</option>
+            <option>Brazil</option><option>Colombia</option><option>Nigeria</option>
+            <option>Kenya</option><option>Ghana</option><option>Zimbabwe</option>
+            <option>Iran</option><option>Saudi Arabia</option><option>UAE</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="lodgeDate">Lodgement date</label>
+          <input type="date" id="lodgeDate" />
+        </div>
+        <div class="form-group">
+          <label for="grantDate">Visa grant date (if granted)</label>
+          <input type="date" id="grantDate" />
+        </div>
+        <div class="form-group full">
+          <label for="status">Current status</label>
+          <select id="status">
+            <option value="Granted">Granted — I have my visa</option>
+            <option value="Pending">Pending — still waiting</option>
+          </select>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="submitEntry()">Submit my data</button>
+      <div class="success-msg" id="successMsg"></div>
+      <div class="error-msg" id="errorMsg"></div>
+    </div>
+  </div>
+
+  <!-- ANALYTICS TAB -->
+  <div id="tab-analytics" style="display:none;">
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">Total submissions</div>
+        <div class="metric-value" id="m-total">0</div>
+        <div class="metric-sub">all subclasses</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Average processing time</div>
+        <div class="metric-value" id="m-avg">—</div>
+        <div class="metric-sub">days (granted only)</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Fastest grant</div>
+        <div class="metric-value" id="m-min">—</div>
+        <div class="metric-sub">days</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Slowest grant</div>
+        <div class="metric-value" id="m-max">—</div>
+        <div class="metric-sub">days</div>
+      </div>
+    </div>
+
+    <div id="noDataMsg" style="display:none;" class="card">
+      <div class="empty">
+        <div class="empty-icon">📊</div>
+        <p>No data yet — be the first to submit!</p>
+      </div>
+    </div>
+
+    <div id="chartsSection">
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Average processing days by country</div>
+          <div id="legend-country" class="legend"></div>
+          <div class="chart-wrap"><canvas id="chartCountry" role="img" aria-label="Bar chart of average processing days by country"></canvas></div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Average processing days by visa subclass</div>
+          <div id="legend-subclass" class="legend"></div>
+          <div class="chart-wrap"><canvas id="chartSubclass" role="img" aria-label="Bar chart of average processing days by visa subclass"></canvas></div>
+        </div>
+      </div>
+      <div class="chart-card">
+        <div class="chart-title">Cumulative submissions over time</div>
+        <div class="chart-wrap-wide"><canvas id="chartTime" role="img" aria-label="Line chart of cumulative submissions over time"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ENTRIES TAB -->
+  <div id="tab-entries" style="display:none;">
+    <div class="card">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Country</th>
+              <th>Subclass</th>
+              <th>Lodged</th>
+              <th>Granted</th>
+              <th>Days</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="entriesBody">
+            <tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>No entries yet.</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  VisaTracker &mdash; visatracker.com.au &mdash; Built by the community, for the community &mdash; Data is stored locally in your browser
+</footer>
+
+<script>
+  let entries = JSON.parse(localStorage.getItem('visaEntries') || '[]');
+  let chartCountry, chartSubclass, chartTime;
+  const COLORS = ['#1b4f8a','#2d6a4f','#c0392b','#b07d00','#7b3fa0','#1a6e8a','#5d4037','#c0692b'];
+
+  function updateHeroStats() {
+    const granted = entries.filter(e => e.days > 0);
+    document.getElementById('hero-total').textContent = entries.length;
+    const days = granted.map(e => e.days);
+    document.getElementById('hero-avg').textContent = days.length ? avg(days) : '—';
+    const countries = new Set(entries.map(e => e.country)).size;
+    document.getElementById('hero-countries').textContent = countries || '—';
+  }
+
+  function switchTab(tab, btn) {
+    ['submit','analytics','entries'].forEach(t => {
+      document.getElementById('tab-'+t).style.display = t === tab ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'analytics') renderAnalytics();
+    if (tab === 'entries') renderEntries();
+  }
+
+  function submitEntry() {
+    const subclass = document.getElementById('subclass').value;
+    const country = document.getElementById('country').value;
+    const lodgeDate = document.getElementById('lodgeDate').value;
+    const grantDate = document.getElementById('grantDate').value;
+    const status = document.getElementById('status').value;
+    const err = document.getElementById('errorMsg');
+    const suc = document.getElementById('successMsg');
+    err.style.display = 'none'; suc.style.display = 'none';
+    if (!subclass || !country || !lodgeDate) {
+      err.textContent = 'Please fill in subclass, country, and lodgement date.';
+      err.style.display = 'block'; return;
+    }
+    if (status === 'Granted' && !grantDate) {
+      err.textContent = 'Please enter your grant date since you selected Granted.';
+      err.style.display = 'block'; return;
+    }
+    const days = (status === 'Granted' && grantDate) ? Math.round((new Date(grantDate) - new Date(lodgeDate)) / 86400000) : null;
+    if (days !== null && days < 0) {
+      err.textContent = 'Grant date cannot be before lodgement date.';
+      err.style.display = 'block'; return;
+    }
+    entries.push({ subclass, country, lodgeDate, grantDate: grantDate || null, days, status, submitted: new Date().toISOString().slice(0,10) });
+    localStorage.setItem('visaEntries', JSON.stringify(entries));
+    updateHeroStats();
+    suc.textContent = days !== null ? `Submitted! Your processing time: ${days} days. Thank you for contributing!` : 'Submitted! Thank you for contributing your data.';
+    suc.style.display = 'block';
+    document.getElementById('subclass').value = '';
+    document.getElementById('country').value = '';
+    document.getElementById('lodgeDate').value = '';
+    document.getElementById('grantDate').value = '';
+    document.getElementById('status').value = 'Granted';
+    setTimeout(() => { suc.style.display = 'none'; }, 5000);
+  }
+
+  function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
+
+  function buildLegend(id, labels, colors) {
+    document.getElementById(id).innerHTML = labels.map((l,i) =>
+      `<div class="legend-item"><div class="legend-dot" style="background:${colors[i%colors.length]}"></div>${l}</div>`
+    ).join('');
+  }
+
+  function renderAnalytics() {
+    const granted = entries.filter(e => e.days !== null && e.days > 0);
+    const days = granted.map(e => e.days);
+    document.getElementById('m-total').textContent = entries.length;
+    document.getElementById('m-avg').textContent = days.length ? avg(days) : '—';
+    document.getElementById('m-min').textContent = days.length ? Math.min(...days) : '—';
+    document.getElementById('m-max').textContent = days.length ? Math.max(...days) : '—';
+    updateHeroStats();
+
+    if (!entries.length) {
+      document.getElementById('noDataMsg').style.display = 'block';
+      document.getElementById('chartsSection').style.display = 'none';
+      return;
+    }
+    document.getElementById('noDataMsg').style.display = 'none';
+    document.getElementById('chartsSection').style.display = 'block';
+
+    const byCountry = {};
+    granted.forEach(e => { if (!byCountry[e.country]) byCountry[e.country] = []; byCountry[e.country].push(e.days); });
+    const cLabels = Object.keys(byCountry);
+    const cData = cLabels.map(c => avg(byCountry[c]));
+    const cColors = cLabels.map((_,i) => COLORS[i%COLORS.length]);
+    buildLegend('legend-country', cLabels, cColors);
+    if (chartCountry) chartCountry.destroy();
+    chartCountry = new Chart(document.getElementById('chartCountry'), {
+      type: 'bar',
+      data: { labels: cLabels, datasets: [{ data: cData, backgroundColor: cColors, borderRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 }, color: '#6b6660' } }, x: { ticks: { font: { size: 11 }, color: '#6b6660', maxRotation: 30 } } } }
+    });
+
+    const bySubclass = {};
+    granted.forEach(e => { if (!bySubclass[e.subclass]) bySubclass[e.subclass] = []; bySubclass[e.subclass].push(e.days); });
+    const sLabels = Object.keys(bySubclass).map(s => 'Subclass ' + s);
+    const sData = Object.keys(bySubclass).map(s => avg(bySubclass[s]));
+    const sColors = sLabels.map((_,i) => COLORS[i%COLORS.length]);
+    buildLegend('legend-subclass', sLabels, sColors);
+    if (chartSubclass) chartSubclass.destroy();
+    chartSubclass = new Chart(document.getElementById('chartSubclass'), {
+      type: 'bar',
+      data: { labels: sLabels, datasets: [{ data: sData, backgroundColor: sColors, borderRadius: 4 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 }, color: '#6b6660' } }, x: { ticks: { font: { size: 11 }, color: '#6b6660' } } } }
+    });
+
+    const byDate = {};
+    entries.forEach(e => { byDate[e.submitted] = (byDate[e.submitted] || 0) + 1; });
+    const dateLabels = Object.keys(byDate).sort();
+    let cum = 0;
+    const cumData = dateLabels.map(d => { cum += byDate[d]; return cum; });
+    if (chartTime) chartTime.destroy();
+    chartTime = new Chart(document.getElementById('chartTime'), {
+      type: 'line',
+      data: { labels: dateLabels, datasets: [{ label: 'Submissions', data: cumData, borderColor: '#1b4f8a', backgroundColor: 'rgba(27,79,138,0.08)', fill: true, tension: 0.35, pointRadius: 4, pointBackgroundColor: '#1b4f8a' }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 }, color: '#6b6660' } }, x: { ticks: { font: { size: 11 }, color: '#6b6660' } } } }
+    });
+  }
+
+  function renderEntries() {
+    const tbody = document.getElementById('entriesBody');
+    if (!entries.length) {
+      tbody.innerHTML = '<tr><td colspan="6"><div class="empty"><div class="empty-icon">📋</div><p>No entries yet.</p></div></td></tr>';
+      return;
+    }
+    tbody.innerHTML = [...entries].reverse().map(e => `
+      <tr>
+        <td>${e.country}</td>
+        <td>Subclass ${e.subclass}</td>
+        <td>${e.lodgeDate}</td>
+        <td>${e.grantDate || '—'}</td>
+        <td>${e.days !== null ? e.days + ' days' : '—'}</td>
+        <td><span class="badge ${e.status === 'Granted' ? 'badge-granted' : 'badge-pending'}">${e.status}</span></td>
+      </tr>`).join('');
+  }
+
+  updateHeroStats();
+</script>
+</body>
+</html>
