@@ -7,6 +7,7 @@
   <title>VisaTracker — Australian Student Visa Processing Times</title>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -102,7 +103,7 @@
       margin-bottom: 1rem;
       font-style: italic;
       opacity: 0;
-      animation: fadeInUp 1.2s ease 0.5s forwards;
+      animation: fadeInUp 1.2s ease 1.3s forwards;
       text-shadow: 0 0 20px rgba(240,192,64,0.5);
     }
     .hero p {
@@ -241,7 +242,7 @@
     /* METRICS */
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 12px;
       margin-bottom: 1.75rem;
     }
@@ -302,7 +303,7 @@
     @media (max-width: 700px) {
       .form-grid { grid-template-columns: 1fr; }
       .form-group.full { grid-column: span 1; }
-      .metrics-grid { grid-template-columns: 1fr 1fr; }
+      .metrics-grid { grid-template-columns: 1fr 1fr 1fr; }
       .charts-grid { grid-template-columns: 1fr; }
       .hero-stats { gap: 1.25rem; }
       .header-badge { display: none; }
@@ -336,10 +337,10 @@
   <canvas id="particles"></canvas>
   <div class="hero-glow"></div>
   <div class="hero-content">
-    <h1>Wondering how long visas take? You’re in the right place.</h1>
+    <h1>Wondering how long visas take? You're in the right place.</h1>
     <p>A community-powered tracker. 
-      Share your experience and see real processing times from other Australian visa applicants.</p>  
-    <div class="hero-dream" style="margin-top: 25px;">✨ Good news could be just around the corner</div>
+      Share your experience and see real processing times from other Australian visa applicants.</p>
+    <div class="hero-dream" style="margin-top: 80px;"> Good news could be just around the corner ✨</div>
   </div>
 </section>
 
@@ -416,6 +417,11 @@
         <div class="metric-sub">days (granted only)</div>
       </div>
       <div class="metric-card">
+        <div class="metric-label">Median processing time</div>
+        <div class="metric-value" id="m-median">—</div>
+        <div class="metric-sub">days (middle value)</div>
+      </div>
+      <div class="metric-card">
         <div class="metric-label">Fastest grant</div>
         <div class="metric-value" id="m-min">—</div>
         <div class="metric-sub">days</div>
@@ -424,6 +430,11 @@
         <div class="metric-label">Slowest grant</div>
         <div class="metric-value" id="m-max">—</div>
         <div class="metric-sub">days</div>
+      </div>
+      <div class="metric-card" style="border-color: #fde8e8;">
+        <div class="metric-label" style="color:#b91c1c;">Still pending</div>
+        <div class="metric-value" id="m-pending" style="color:#b91c1c;">—</div>
+        <div class="metric-sub">waiting for grant</div>
       </div>
     </div>
 
@@ -450,6 +461,10 @@
       <div class="chart-card">
         <div class="chart-title">Cumulative submissions over time</div>
         <div class="chart-wrap-wide"><canvas id="chartTime" role="img" aria-label="Line chart of cumulative submissions over time"></canvas></div>
+      </div>
+      <div class="chart-card" id="backlogCard" style="display:none;">
+        <div class="chart-title" style="color:#b91c1c;">⏳ Backlog — pending applications by lodgement month</div>
+        <div class="chart-wrap-wide"><canvas id="chartBacklog" role="img" aria-label="Bar chart of pending applications by lodgement month"></canvas></div>
       </div>
     </div>
   </div>
@@ -483,38 +498,46 @@
 </footer>
 
 <script>
-  let entries = JSON.parse(localStorage.getItem('visaEntries') || '[]');
-  let chartCountry, chartSubclass, chartTime;
-  const COLORS = ['#1b4f8a','#2d6a4f','#c0392b','#b07d00','#7b3fa0','#1a6e8a','#5d4037','#c0692b'];
+  // ─── Supabase setup ───────────────────────────────────────────────────────
+  const SUPABASE_URL = 'https://abtabfagggjpxecxzprc.supabase.co';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFidGFiZmFnZ2dqcHhlY3h6cHJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTI2ODYsImV4cCI6MjA5MzM4ODY4Nn0.tbUX661ZHCSdtkO_yhKSnNxPxWOBpah7lkVyDEqNBFs';
+  const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  function updateHeroStats() {
-    const granted = entries.filter(e => e.days > 0);
-    document.getElementById('hero-total').textContent = entries.length;
-    const days = granted.map(e => e.days);
-    document.getElementById('hero-avg').textContent = days.length ? avg(days) : '—';
-    const countries = new Set(entries.map(e => e.country)).size;
-    document.getElementById('hero-countries').textContent = countries || '—';
+  // ─── State ────────────────────────────────────────────────────────────────
+  let entries = [];
+  let chartCountry, chartSubclass, chartTime, chartBacklog;
+  const COLORS = ['#1b4f8a','#2d6a4f','#c0392b','#b07d00','#7b3fa0','#1a6e8a','#5d4037','#c0692b','#1a7a4a','#8a3a1b'];
+
+  // ─── Load all entries from Supabase ──────────────────────────────────────
+  async function loadEntries() {
+    const { data, error } = await sb
+      .from('submissions')
+      .select('*')
+      .order('created_at', { ascending: true });
+    if (error) { console.error('Load error:', error); return; }
+    entries = (data || []).map(r => ({
+      subclass:  r.subclass,
+      country:   r.country,
+      lodgeDate: r.lodge_date,
+      grantDate: r.grant_date || null,
+      days:      r.days_to_grant || null,
+      status:    r.status,
+      submitted: (r.created_at || '').slice(0,10)
+    }));
+    updateHeroStats();
   }
 
-  function switchTab(tab, btn) {
-    ['submit','analytics','entries'].forEach(t => {
-      document.getElementById('tab-'+t).style.display = t === tab ? 'block' : 'none';
-    });
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    if (tab === 'analytics') renderAnalytics();
-    if (tab === 'entries') renderEntries();
-  }
-
-  function submitEntry() {
-    const subclass = document.getElementById('subclass').value;
-    const country = document.getElementById('country').value;
+  // ─── Submit entry to Supabase ─────────────────────────────────────────────
+  async function submitEntry() {
+    const subclass  = document.getElementById('subclass').value;
+    const country   = document.getElementById('country').value;
     const lodgeDate = document.getElementById('lodgeDate').value;
     const grantDate = document.getElementById('grantDate').value;
-    const status = document.getElementById('status').value;
+    const status    = document.getElementById('status').value;
     const err = document.getElementById('errorMsg');
     const suc = document.getElementById('successMsg');
     err.style.display = 'none'; suc.style.display = 'none';
+
     if (!subclass || !country || !lodgeDate) {
       err.textContent = 'Please fill in subclass, country, and lodgement date.';
       err.style.display = 'block'; return;
@@ -523,25 +546,81 @@
       err.textContent = 'Please enter your grant date since you selected Granted.';
       err.style.display = 'block'; return;
     }
-    const days = (status === 'Granted' && grantDate) ? Math.round((new Date(grantDate) - new Date(lodgeDate)) / 86400000) : null;
+    const days = (status === 'Granted' && grantDate)
+      ? Math.round((new Date(grantDate) - new Date(lodgeDate)) / 86400000)
+      : null;
     if (days !== null && days < 0) {
       err.textContent = 'Grant date cannot be before lodgement date.';
       err.style.display = 'block'; return;
     }
-    entries.push({ subclass, country, lodgeDate, grantDate: grantDate || null, days, status, submitted: new Date().toISOString().slice(0,10) });
-    localStorage.setItem('visaEntries', JSON.stringify(entries));
+
+    const btn = document.querySelector('.submit-btn');
+    btn.textContent = 'Submitting…';
+    btn.disabled = true;
+
+    const { error } = await sb.from('submissions').insert({
+      subclass,
+      country,
+      lodge_date:    lodgeDate,
+      grant_date:    grantDate || null,
+      days_to_grant: days,
+      status
+    });
+
+    btn.textContent = 'Submit my data';
+    btn.disabled = false;
+
+    if (error) {
+      err.textContent = 'Something went wrong. Please try again.';
+      err.style.display = 'block'; return;
+    }
+
+    // Add to local entries and refresh
+    entries.push({ subclass, country, lodgeDate, grantDate: grantDate||null, days, status, submitted: new Date().toISOString().slice(0,10) });
     updateHeroStats();
-    suc.textContent = days !== null ? `Submitted! Your processing time: ${days} days. Thank you for contributing!` : 'Submitted! Thank you for contributing your data.';
+
+    suc.textContent = days !== null
+      ? `Submitted! Your processing time: ${days} days. Thank you! 🎉`
+      : 'Submitted! Thank you for contributing your data. 🎉';
     suc.style.display = 'block';
-    document.getElementById('subclass').value = '';
-    document.getElementById('country').value = '';
+
+    document.getElementById('subclass').value  = '';
+    document.getElementById('country').value   = '';
     document.getElementById('lodgeDate').value = '';
     document.getElementById('grantDate').value = '';
-    document.getElementById('status').value = 'Granted';
-    setTimeout(() => { suc.style.display = 'none'; }, 5000);
+    document.getElementById('status').value    = 'Granted';
+    setTimeout(() => { suc.style.display = 'none'; }, 6000);
   }
 
-  function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
+  // ─── Hero stats ───────────────────────────────────────────────────────────
+  function updateHeroStats() {
+    const granted = entries.filter(e => e.days > 0);
+    document.getElementById('hero-total').textContent    = entries.length;
+    const days = granted.map(e => e.days);
+    document.getElementById('hero-avg').textContent      = days.length ? avg(days) : '—';
+    const countries = new Set(entries.map(e => e.country)).size;
+    document.getElementById('hero-countries').textContent = countries || '—';
+  }
+
+  // ─── Tab switching ────────────────────────────────────────────────────────
+  function switchTab(tab, btn) {
+    ['submit','analytics','entries'].forEach(t => {
+      document.getElementById('tab-'+t).style.display = t === tab ? 'block' : 'none';
+    });
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (tab === 'analytics') renderAnalytics();
+    if (tab === 'entries')   renderEntries();
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────────────────────
+  function avg(arr)    { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : null; }
+  function median(arr) {
+    if (!arr.length) return null;
+    const s = [...arr].sort((a,b)=>a-b);
+    const m = Math.floor(s.length/2);
+    return s.length % 2 ? s[m] : Math.round((s[m-1]+s[m])/2);
+  }
 
   function buildLegend(id, labels, colors) {
     document.getElementById(id).innerHTML = labels.map((l,i) =>
@@ -549,13 +628,18 @@
     ).join('');
   }
 
+  // ─── Analytics ────────────────────────────────────────────────────────────
   function renderAnalytics() {
     const granted = entries.filter(e => e.days !== null && e.days > 0);
-    const days = granted.map(e => e.days);
-    document.getElementById('m-total').textContent = entries.length;
-    document.getElementById('m-avg').textContent = days.length ? avg(days) : '—';
-    document.getElementById('m-min').textContent = days.length ? Math.min(...days) : '—';
-    document.getElementById('m-max').textContent = days.length ? Math.max(...days) : '—';
+    const pending = entries.filter(e => e.status === 'Pending');
+    const days    = granted.map(e => e.days);
+
+    document.getElementById('m-total').textContent   = entries.length;
+    document.getElementById('m-avg').textContent     = days.length ? avg(days) : '—';
+    document.getElementById('m-median').textContent  = days.length ? median(days) : '—';
+    document.getElementById('m-min').textContent     = days.length ? Math.min(...days) : '—';
+    document.getElementById('m-max').textContent     = days.length ? Math.max(...days) : '—';
+    document.getElementById('m-pending').textContent = pending.length;
     updateHeroStats();
 
     if (!entries.length) {
@@ -566,45 +650,69 @@
     document.getElementById('noDataMsg').style.display = 'none';
     document.getElementById('chartsSection').style.display = 'block';
 
+    // Chart 1 — avg days by country
     const byCountry = {};
     granted.forEach(e => { if (!byCountry[e.country]) byCountry[e.country] = []; byCountry[e.country].push(e.days); });
-    const cLabels = Object.keys(byCountry);
-    const cData = cLabels.map(c => avg(byCountry[c]));
+    const cLabels = Object.keys(byCountry).sort((a,b) => avg(byCountry[b]) - avg(byCountry[a]));
+    const cData   = cLabels.map(c => avg(byCountry[c]));
     const cColors = cLabels.map((_,i) => COLORS[i%COLORS.length]);
     buildLegend('legend-country', cLabels, cColors);
     if (chartCountry) chartCountry.destroy();
     chartCountry = new Chart(document.getElementById('chartCountry'), {
       type: 'bar',
       data: { labels: cLabels, datasets: [{ data: cData, backgroundColor: cColors, borderRadius: 4 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 }, color: '#6b6660' } }, x: { ticks: { font: { size: 11 }, color: '#6b6660', maxRotation: 30 } } } }
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw} days avg` } } }, scales:{ y:{beginAtZero:true, ticks:{font:{size:11},color:'#6b6660'}}, x:{ticks:{font:{size:11},color:'#6b6660',maxRotation:30}}  } }
     });
 
+    // Chart 2 — avg days by subclass
     const bySubclass = {};
     granted.forEach(e => { if (!bySubclass[e.subclass]) bySubclass[e.subclass] = []; bySubclass[e.subclass].push(e.days); });
     const sLabels = Object.keys(bySubclass).map(s => 'Subclass ' + s);
-    const sData = Object.keys(bySubclass).map(s => avg(bySubclass[s]));
+    const sData   = Object.keys(bySubclass).map(s => avg(bySubclass[s]));
     const sColors = sLabels.map((_,i) => COLORS[i%COLORS.length]);
     buildLegend('legend-subclass', sLabels, sColors);
     if (chartSubclass) chartSubclass.destroy();
     chartSubclass = new Chart(document.getElementById('chartSubclass'), {
       type: 'bar',
       data: { labels: sLabels, datasets: [{ data: sData, backgroundColor: sColors, borderRadius: 4 }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { font: { size: 11 }, color: '#6b6660' } }, x: { ticks: { font: { size: 11 }, color: '#6b6660' } } } }
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ y:{beginAtZero:true, ticks:{font:{size:11},color:'#6b6660'}}, x:{ticks:{font:{size:11},color:'#6b6660'}} } }
     });
 
+    // Chart 3 — cumulative submissions over time
     const byDate = {};
-    entries.forEach(e => { byDate[e.submitted] = (byDate[e.submitted] || 0) + 1; });
+    entries.forEach(e => { byDate[e.submitted] = (byDate[e.submitted]||0) + 1; });
     const dateLabels = Object.keys(byDate).sort();
     let cum = 0;
     const cumData = dateLabels.map(d => { cum += byDate[d]; return cum; });
     if (chartTime) chartTime.destroy();
     chartTime = new Chart(document.getElementById('chartTime'), {
       type: 'line',
-      data: { labels: dateLabels, datasets: [{ label: 'Submissions', data: cumData, borderColor: '#1b4f8a', backgroundColor: 'rgba(27,79,138,0.08)', fill: true, tension: 0.35, pointRadius: 4, pointBackgroundColor: '#1b4f8a' }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1, font: { size: 11 }, color: '#6b6660' } }, x: { ticks: { font: { size: 11 }, color: '#6b6660' } } } }
+      data: { labels: dateLabels, datasets: [{ label: 'Submissions', data: cumData, borderColor:'#1b4f8a', backgroundColor:'rgba(27,79,138,0.08)', fill:true, tension:0.35, pointRadius:4, pointBackgroundColor:'#1b4f8a' }] },
+      options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false} }, scales:{ y:{beginAtZero:true, ticks:{stepSize:1,font:{size:11},color:'#6b6660'}}, x:{ticks:{font:{size:11},color:'#6b6660'}} } }
     });
+
+    // Chart 4 — backlog: pending applications lodged over time
+    const pendingByMonth = {};
+    pending.forEach(e => {
+      const month = e.lodgeDate ? e.lodgeDate.slice(0,7) : null;
+      if (month) { pendingByMonth[month] = (pendingByMonth[month]||0) + 1; }
+    });
+    const bLabels = Object.keys(pendingByMonth).sort();
+    const bData   = bLabels.map(m => pendingByMonth[m]);
+    if (chartBacklog) chartBacklog.destroy();
+    if (bLabels.length) {
+      chartBacklog = new Chart(document.getElementById('chartBacklog'), {
+        type: 'bar',
+        data: { labels: bLabels, datasets: [{ label: 'Still pending', data: bData, backgroundColor: '#c0392b', borderRadius: 4 }] },
+        options: { responsive:true, maintainAspectRatio:false, plugins:{ legend:{display:false}, tooltip:{ callbacks:{ label: ctx => ` ${ctx.raw} still waiting` } } }, scales:{ y:{beginAtZero:true, ticks:{stepSize:1,font:{size:11},color:'#6b6660'}}, x:{ticks:{font:{size:11},color:'#6b6660',maxRotation:30}} } }
+      });
+      document.getElementById('backlogCard').style.display = 'block';
+    } else {
+      document.getElementById('backlogCard').style.display = 'none';
+    }
   }
 
+  // ─── Entries table ────────────────────────────────────────────────────────
   function renderEntries() {
     const tbody = document.getElementById('entriesBody');
     if (!entries.length) {
@@ -622,17 +730,12 @@
       </tr>`).join('');
   }
 
-  updateHeroStats();
-
-  // PARTICLES ANIMATION
+  // ─── Particles animation ──────────────────────────────────────────────────
   const canvas = document.getElementById('particles');
-  const ctx = canvas.getContext('2d');
+  const ctx    = canvas.getContext('2d');
   let pts = [];
 
-  function resizeCanvas() {
-    canvas.width = canvas.offsetWidth;
-    canvas.height = canvas.offsetHeight;
-  }
+  function resizeCanvas() { canvas.width = canvas.offsetWidth; canvas.height = canvas.offsetHeight; }
 
   function newParticle() {
     return {
@@ -649,27 +752,17 @@
   }
 
   function initParticles() {
-    resizeCanvas();
-    pts = [];
-    for (let i = 0; i < 55; i++) {
-      const p = newParticle();
-      p.y = Math.random() * canvas.height;
-      pts.push(p);
-    }
+    resizeCanvas(); pts = [];
+    for (let i = 0; i < 55; i++) { const p = newParticle(); p.y = Math.random() * canvas.height; pts.push(p); }
   }
 
   function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     pts.forEach((p, i) => {
-      p.y -= p.speedY;
-      p.wobble += p.wobbleSpeed;
+      p.y -= p.speedY; p.wobble += p.wobbleSpeed;
       p.x += Math.sin(p.wobble) * 0.4 + p.speedX;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.globalAlpha = p.opacity;
-      ctx.fill();
-      ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color; ctx.globalAlpha = p.opacity; ctx.fill(); ctx.globalAlpha = 1;
       if (p.y < -10) pts[i] = newParticle();
     });
     requestAnimationFrame(animateParticles);
@@ -678,5 +771,9 @@
   window.addEventListener('resize', initParticles);
   initParticles();
   animateParticles();
+
+  // ─── Boot ─────────────────────────────────────────────────────────────────
+  loadEntries();
+</script>
 </body>
 </html>
