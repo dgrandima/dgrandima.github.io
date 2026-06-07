@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VisaTracker — Student Visa Setup</title>
+<title>VisaTracker — Student Visa</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -18,412 +18,308 @@
   --blue:#4a9eff;--blue-dim:rgba(74,158,255,0.1);
   --orange:#ff8c42;--orange-dim:rgba(255,140,66,0.1);
   --red:#ff5555;--red-dim:rgba(255,85,85,0.1);
-  --purple:#a78bfa;--purple-dim:rgba(167,139,250,0.1);
   --r:14px;--rsm:8px;
 }
 body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--text);min-height:100vh;}
 
-/* ── PAGE SYSTEM ── */
 .page{display:none;min-height:100vh;}
 .page.active{display:block;}
 
-/* ── SHARED NAV ── */
+/* ── NAV ── */
 .top-nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:1rem 2.5rem;
-  background:rgba(7,7,9,0.85);backdrop-filter:blur(12px);
+  background:rgba(7,7,9,0.9);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
 }
-.nav-logo{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--text);}
+.nav-logo{
+  font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;
+  display:flex;align-items:center;gap:7px;
+  text-decoration:none;color:var(--text);
+}
 .nav-logo span{color:var(--gold);}
 .logo-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 8px var(--gold-glow);}
-.nav-user{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--muted);}
-.nav-avatar{width:30px;height:30px;background:var(--gold-dim);border:1px solid rgba(232,184,75,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--gold);}
-
-/* ── STEP PROGRESS BAR ── */
-.step-bar{
-  position:fixed;top:64px;left:0;right:0;z-index:99;
-  background:var(--black2);border-bottom:1px solid var(--border);
-  padding:.9rem 2.5rem;
-  display:flex;align-items:center;gap:0;
-}
-.step-item{
-  display:flex;align-items:center;gap:8px;
-  font-size:12px;font-weight:700;color:var(--dim);
-  flex:1;
-}
-.step-item.active{color:var(--gold);}
-.step-item.done{color:var(--green);}
-.step-num{
-  width:24px;height:24px;border-radius:50%;
-  border:2px solid var(--dim);
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-user-name{font-size:12.5px;color:var(--muted);}
+.nav-avatar{
+  width:30px;height:30px;background:var(--gold-dim);
+  border:1px solid rgba(232,184,75,.3);border-radius:50%;
   display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:800;flex-shrink:0;
-  transition:all .3s;
+  font-size:11px;font-weight:800;color:var(--gold);
 }
-.step-item.active .step-num{border-color:var(--gold);color:var(--gold);background:var(--gold-dim);}
-.step-item.done .step-num{border-color:var(--green);background:var(--green);color:#000;}
-.step-line{flex:1;height:1px;background:var(--border);margin:0 8px;}
-.step-line.done{background:var(--green);}
-.step-label{display:none;}
-@media(min-width:600px){.step-label{display:inline;}}
+.logout-btn{
+  padding:6px 16px;background:transparent;
+  border:1px solid var(--border2);border-radius:99px;
+  color:var(--muted);font-family:'Nunito',sans-serif;
+  font-size:12px;font-weight:700;cursor:pointer;
+  transition:all .15s;
+}
+.logout-btn:hover{border-color:var(--red);color:var(--red);}
 
-/* ── FORM PAGES ── */
+/* ── FORM SHELL ── */
 .form-shell{
-  max-width:680px;margin:0 auto;
-  padding:9rem 1.5rem 3rem;
+  max-width:620px;margin:0 auto;
+  padding:7rem 1.5rem 3rem;
 }
-.form-section-title{
-  font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:800;
+.form-heading{
+  font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:900;
   margin-bottom:.4rem;
 }
-.form-section-sub{font-size:13.5px;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
+.form-sub{font-size:13.5px;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
 
 .form-card{
   background:var(--surface);border:1px solid var(--border2);
   border-radius:var(--r);padding:1.75rem;margin-bottom:1.25rem;
 }
 .form-card-title{
-  font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;
+  font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;
   color:var(--gold);margin-bottom:1.25rem;
   display:flex;align-items:center;gap:8px;
 }
 .fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.fg-grid.cols-1{grid-template-columns:1fr;}
-.fg-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
 .fg{display:flex;flex-direction:column;gap:6px;}
-.fg.span2{grid-column:span 2;}
+.fg.full{grid-column:span 2;}
 .fg label{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;}
-.fg input,.fg select,.fg textarea{
+.fg input,.fg select{
   padding:10px 13px;
   background:var(--surface2);
   border:1px solid var(--border);
   border-radius:var(--rsm);
   color:var(--text);
   font-family:'Nunito Sans',sans-serif;font-size:13.5px;
-  outline:none;transition:border-color .15s,box-shadow .15s;
-  width:100%;
+  outline:none;transition:border-color .15s,box-shadow .15s;width:100%;
 }
-.fg input:focus,.fg select:focus,.fg textarea:focus{
+.fg input:focus,.fg select:focus{
   border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,184,75,.08);
 }
-.fg textarea{resize:vertical;min-height:80px;}
 .fg select option{background:var(--surface2);}
 
-/* Radio / checkbox group */
-.radio-group,.check-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
-.radio-opt,.check-opt{
+/* Radio pills */
+.radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
+.radio-opt{
   display:flex;align-items:center;gap:6px;
   padding:7px 14px;
   background:var(--surface2);border:1px solid var(--border);
   border-radius:99px;font-size:12.5px;font-weight:600;color:var(--muted);
   cursor:pointer;transition:all .15s;user-select:none;
 }
-.radio-opt input,.check-opt input{display:none;}
-.radio-opt.selected,.check-opt.selected{
-  background:var(--gold-dim);border-color:rgba(232,184,75,.35);
-  color:var(--gold);
-}
-.radio-opt:hover,.check-opt:hover{border-color:var(--gold);color:var(--gold);}
+.radio-opt input{display:none;}
+.radio-opt.selected{background:var(--gold-dim);border-color:rgba(232,184,75,.35);color:var(--gold);}
+.radio-opt:hover{border-color:var(--gold);color:var(--gold);}
+.radio-opt.full-width{border-radius:var(--rsm);width:100%;}
 
-/* Date pair */
-.date-pair{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;}
-.still-waiting-btn{
-  padding:10px 14px;
+/* Grant date toggle */
+.grant-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;}
+.waiting-toggle{
+  padding:10px 14px;height:42px;
   background:var(--surface2);border:1px solid var(--border);
   border-radius:var(--rsm);font-family:'Nunito Sans',sans-serif;
   font-size:12px;font-weight:700;color:var(--muted);
   cursor:pointer;transition:all .15s;white-space:nowrap;
-  height:40px;
 }
-.still-waiting-btn.active{background:var(--blue-dim);border-color:rgba(74,158,255,.3);color:var(--blue);}
+.waiting-toggle.on{background:var(--blue-dim);border-color:rgba(74,158,255,.3);color:var(--blue);}
 
-/* Nav buttons */
-.form-nav{
-  display:flex;justify-content:space-between;align-items:center;
-  margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);
+/* Locked field */
+.locked-field{
+  padding:10px 13px;
+  background:rgba(255,255,255,.03);
+  border:1px solid var(--border);
+  border-radius:var(--rsm);
+  color:var(--dim);font-size:13.5px;
+  display:flex;align-items:center;justify-content:space-between;
 }
-.btn-back{
-  padding:10px 22px;background:transparent;
-  border:1px solid var(--border2);border-radius:99px;
-  color:var(--muted);font-family:'Nunito',sans-serif;
-  font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;
+.locked-badge{
+  font-size:10px;font-weight:700;color:var(--dim);
+  padding:2px 8px;border-radius:99px;
+  background:var(--surface3);
 }
-.btn-back:hover{border-color:var(--text-muted);color:var(--text);}
-.btn-next{
-  padding:11px 30px;background:var(--gold);border:none;
-  border-radius:99px;color:#000;font-family:'Nunito',sans-serif;
-  font-size:13.5px;font-weight:800;cursor:pointer;
-  transition:all .2s;box-shadow:0 4px 16px var(--gold-glow);
-}
-.btn-next:hover{opacity:.88;transform:translateY(-1px);}
-.btn-next:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+
+/* Submit button */
 .btn-submit{
-  padding:13px 40px;background:linear-gradient(135deg,var(--gold),#f5d98b);
-  border:none;border-radius:99px;color:#000;
-  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;
-  cursor:pointer;transition:all .2s;
-  box-shadow:0 6px 24px var(--gold-glow);
+  width:100%;padding:14px;
+  background:var(--gold);border:none;border-radius:var(--rsm);
+  color:#000;font-family:'Nunito',sans-serif;
+  font-size:14px;font-weight:800;cursor:pointer;
+  transition:all .2s;box-shadow:0 4px 20px var(--gold-glow);
+  margin-top:.5rem;
 }
-.btn-submit:hover{opacity:.88;transform:translateY(-2px);}
+.btn-submit:hover{opacity:.88;transform:translateY(-1px);}
 
-/* Progress ring on step bar mobile */
-.step-prog{
-  font-size:11px;font-weight:700;color:var(--muted);
-  margin-left:auto;white-space:nowrap;
+/* Error */
+.form-error{
+  padding:10px 14px;background:var(--red-dim);color:var(--red);
+  border-radius:var(--rsm);font-size:12.5px;font-weight:600;
+  margin-top:10px;display:none;
 }
 
-/* ── LOADING SCREEN ── */
+/* ── LOADING ── */
 #page-loading{
-  display:none;min-height:100vh;
-  background:var(--black);
-  flex-direction:column;align-items:center;justify-content:center;
+  min-height:100vh;background:var(--black);
+  display:none;flex-direction:column;
+  align-items:center;justify-content:center;
   text-align:center;padding:2rem;
 }
 #page-loading.active{display:flex;}
 .loading-ring{
-  width:72px;height:72px;margin-bottom:2rem;
+  width:68px;height:68px;margin-bottom:1.75rem;
   border:4px solid var(--surface2);
   border-top:4px solid var(--gold);
-  border-radius:50%;
-  animation:spin 1s linear infinite;
+  border-radius:50%;animation:spin 1s linear infinite;
 }
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-title{font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:.5rem;}
-.loading-sub{font-size:13.5px;color:var(--muted);max-width:360px;line-height:1.6;}
-.loading-dots{margin-top:1.5rem;display:flex;gap:6px;justify-content:center;}
+.loading-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px;}
+.loading-dots{display:flex;gap:6px;justify-content:center;margin-top:1.5rem;}
 .loading-dots span{
-  width:8px;height:8px;background:var(--gold);border-radius:50%;
-  animation:dotBounce 1.2s ease infinite;opacity:.3;
+  width:8px;height:8px;border-radius:50%;background:var(--gold);opacity:.3;
+  animation:db 1.2s ease infinite;
 }
 .loading-dots span:nth-child(2){animation-delay:.2s;}
 .loading-dots span:nth-child(3){animation-delay:.4s;}
-@keyframes dotBounce{0%,80%,100%{opacity:.3;transform:scale(.85)}40%{opacity:1;transform:scale(1.2)}}
+@keyframes db{0%,80%,100%{opacity:.3;transform:scale(.85)}40%{opacity:1;transform:scale(1.2)}}
 .loading-steps{
-  margin-top:2rem;display:flex;flex-direction:column;gap:8px;
-  max-width:300px;text-align:left;
+  margin-top:2rem;display:flex;flex-direction:column;gap:10px;
+  max-width:280px;text-align:left;
 }
-.loading-step{
-  display:flex;align-items:center;gap:10px;
-  font-size:13px;color:var(--dim);transition:color .3s;
-}
-.loading-step.done{color:var(--green);}
-.loading-step.active{color:var(--text);}
-.loading-step-icon{font-size:14px;width:18px;text-align:center;}
+.ls{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);transition:color .3s;}
+.ls.active{color:var(--text);}
+.ls.done{color:var(--green);}
 
-/* ── WELCOME / DASHBOARD ── */
-.welcome-shell{
-  max-width:820px;margin:0 auto;
-  padding:6rem 1.5rem 3rem;
-}
+/* ── WELCOME PAGE ── */
+.welcome-shell{max-width:680px;margin:0 auto;padding:6rem 1.5rem 3rem;}
+
 .welcome-hero{
-  background:linear-gradient(135deg,#1a1a2e 0%,#16213e 50%,#0f3460 100%);
-  border-radius:20px;padding:2rem 2.5rem;margin-bottom:1.75rem;
+  background:linear-gradient(135deg,#0f0f1e 0%,#1a1040 100%);
   border:1px solid rgba(232,184,75,.15);
+  border-radius:20px;padding:2rem 2.5rem;margin-bottom:1.5rem;
   position:relative;overflow:hidden;
 }
-.welcome-hero::before{
-  content:'';position:absolute;top:-40px;right:-40px;
-  width:180px;height:180px;
-  background:radial-gradient(circle,rgba(232,184,75,.1),transparent 70%);
-  border-radius:50%;
+.welcome-hero::after{
+  content:'';position:absolute;top:-50px;right:-50px;
+  width:200px;height:200px;
+  background:radial-gradient(circle,rgba(232,184,75,.08),transparent 70%);
+  border-radius:50%;pointer-events:none;
 }
 .welcome-tag{
   display:inline-block;background:var(--gold-dim);color:var(--gold);
   font-size:10.5px;font-weight:800;padding:3px 12px;
-  border-radius:99px;letter-spacing:.5px;margin-bottom:.75rem;
-  border:1px solid rgba(232,184,75,.2);
+  border-radius:99px;border:1px solid rgba(232,184,75,.2);
+  margin-bottom:.75rem;
 }
-.welcome-name{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:900;margin-bottom:.3rem;}
-.welcome-name span{color:var(--gold);}
-.welcome-sub{font-size:13.5px;color:var(--muted);line-height:1.6;}
-
-/* Summary cards */
-.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1.5rem;}
-.summary-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.25rem 1.4rem;
-}
-.summary-card-title{
-  font-family:'Nunito',sans-serif;font-size:.85rem;font-weight:800;
-  color:var(--muted);margin-bottom:1rem;
-  display:flex;align-items:center;gap:7px;
-  text-transform:uppercase;letter-spacing:.5px;font-size:10.5px;
-}
-.summary-row{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:6px 0;border-bottom:1px solid var(--border);
-  font-size:12.5px;
-}
-.summary-row:last-child{border-bottom:none;}
-.summary-row-label{color:var(--muted);}
-.summary-row-val{font-weight:700;color:var(--text);text-align:right;max-width:55%;}
-
-/* Milestone timeline */
-.milestone-section{margin-bottom:1.75rem;}
-.milestone-title{
-  font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;
-  margin-bottom:1.25rem;color:var(--text);
-  display:flex;align-items:center;gap:8px;
-}
-.milestones{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.5rem;
-  position:relative;
-}
-.milestone-node{
-  display:flex;gap:1.25rem;padding:.75rem 0;
-  position:relative;
-}
-.milestone-node:not(:last-child)::before{
-  content:'';position:absolute;left:15px;top:38px;
-  width:2px;height:calc(100% - 10px);
-  background:var(--border);z-index:0;
-}
-.m-dot{
-  width:32px;height:32px;border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:12px;flex-shrink:0;z-index:1;
-  border:2px solid var(--border);transition:all .3s;
-}
-.m-dot.done{background:var(--green);border-color:var(--green);color:#000;box-shadow:0 0 10px rgba(61,220,132,.3);}
-.m-dot.active{background:var(--gold);border-color:var(--gold);color:#000;box-shadow:0 0 10px var(--gold-glow);animation:glowPulse 2s ease infinite;}
-.m-dot.waiting{background:var(--surface2);color:var(--dim);}
-@keyframes glowPulse{0%,100%{box-shadow:0 0 8px var(--gold-glow)}50%{box-shadow:0 0 20px var(--gold-glow),0 0 40px rgba(232,184,75,.1)}}
-.m-info{flex:1;padding-top:4px;}
-.m-name{font-size:13.5px;font-weight:700;color:var(--text);margin-bottom:3px;}
-.m-date{font-size:12px;color:var(--muted);}
-.m-badge{
-  display:inline-block;margin-top:5px;
-  padding:2px 10px;border-radius:99px;
-  font-size:10.5px;font-weight:700;
-}
-.badge-done{background:var(--green-dim);color:var(--green);}
-.badge-active{background:var(--gold-dim);color:var(--gold);}
-.badge-wait{background:var(--surface2);color:var(--dim);}
-.badge-none{background:var(--surface3);color:var(--dim);}
-
-/* CTA button */
-.analyse-wrap{
-  background:linear-gradient(135deg,#1a0533 0%,#2d1055 100%);
-  border:1px solid rgba(167,139,250,.2);
-  border-radius:var(--r);padding:2rem;
-  text-align:center;
-}
-.analyse-title{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.4rem;}
-.analyse-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
-.btn-analyse{
-  padding:14px 42px;
-  background:linear-gradient(135deg,#7c3aed,#a78bfa);
-  border:none;border-radius:99px;color:#fff;
-  font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;
-  cursor:pointer;transition:all .25s;
-  box-shadow:0 6px 24px rgba(124,58,237,.4);
-  display:inline-flex;align-items:center;gap:10px;
-}
-.btn-analyse:hover{opacity:.88;transform:translateY(-2px);}
-.btn-analyse svg{transition:transform .2s;}
-.btn-analyse:hover svg{transform:translateX(3px);}
-
-/* edit link */
-.edit-link{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:12px;color:var(--muted);cursor:pointer;
-  margin-top:1rem;text-decoration:none;transition:color .15s;
-}
-.edit-link:hover{color:var(--gold);}
-
-/* Error */
-.form-error{
-  padding:10px 14px;background:var(--red-dim);
-  color:var(--red);border-radius:var(--rsm);
-  font-size:12.5px;font-weight:600;margin-top:12px;
-  display:none;
-}
-
-/* Days counter badge */
+.welcome-hi{font-family:'Nunito',sans-serif;font-size:1.75rem;font-weight:900;margin-bottom:.3rem;}
+.welcome-hi span{color:var(--gold);}
+.welcome-desc{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:1rem;}
 .days-badge{
   display:inline-flex;align-items:center;gap:6px;
   padding:5px 14px;border-radius:99px;
   font-size:12px;font-weight:700;
 }
-.days-badge.green{background:var(--green-dim);color:var(--green);}
-.days-badge.amber{background:rgba(255,140,66,.12);color:var(--orange);}
-.days-badge.red{background:var(--red-dim);color:var(--red);}
-.days-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.days-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
+.green{background:var(--green-dim);color:var(--green);}
+.amber{background:var(--orange-dim);color:var(--orange);}
+.red-b{background:var(--red-dim);color:var(--red);}
 
-@media(max-width:600px){
+/* Summary card */
+.summary-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:var(--r);padding:1.4rem 1.6rem;margin-bottom:1.25rem;
+}
+.summary-card-title{
+  font-size:10.5px;font-weight:800;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.8px;
+  margin-bottom:1rem;display:flex;align-items:center;gap:6px;
+}
+.srow{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;
+}
+.srow:last-child{border-bottom:none;}
+.srow-label{color:var(--muted);}
+.srow-val{font-weight:700;color:var(--text);text-align:right;max-width:60%;}
+
+/* Status display */
+.status-display{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700;
+}
+.status-lodged{background:var(--blue-dim);color:var(--blue);}
+.status-health{background:var(--orange-dim);color:var(--orange);}
+.status-fir{background:var(--orange-dim);color:var(--orange);}
+.status-fis{background:var(--blue-dim);color:var(--blue);}
+.status-granted{background:var(--green-dim);color:var(--green);}
+.status-refused{background:var(--red-dim);color:var(--red);}
+
+/* Analyse CTA */
+.analyse-wrap{
+  background:linear-gradient(135deg,#150833,#22104a);
+  border:1px solid rgba(167,139,250,.2);
+  border-radius:var(--r);padding:2rem;
+  text-align:center;margin-top:1.5rem;
+}
+.analyse-title{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.4rem;}
+.analyse-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
+.btn-analyse{
+  padding:13px 36px;
+  background:linear-gradient(135deg,#7c3aed,#a78bfa);
+  border:none;border-radius:99px;color:#fff;
+  font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:800;
+  cursor:pointer;transition:all .25s;
+  box-shadow:0 6px 24px rgba(124,58,237,.35);
+  display:inline-flex;align-items:center;gap:8px;
+}
+.btn-analyse:hover{opacity:.88;transform:translateY(-2px);}
+
+.edit-link{
+  display:block;text-align:center;
+  font-size:12.5px;color:var(--dim);cursor:pointer;
+  margin-top:1rem;transition:color .15s;
+}
+.edit-link:hover{color:var(--gold);}
+
+@media(max-width:560px){
   .fg-grid{grid-template-columns:1fr;}
-  .fg.span2{grid-column:span 1;}
-  .fg-grid.cols-3{grid-template-columns:1fr 1fr;}
-  .summary-grid{grid-template-columns:1fr;}
-  .step-bar{padding:.9rem 1rem;}
+  .fg.full{grid-column:span 1;}
   .top-nav{padding:1rem 1.25rem;}
-  .form-shell,.welcome-shell{padding:8rem 1rem 3rem;}
+  .form-shell,.welcome-shell{padding:6rem 1rem 3rem;}
 }
 </style>
 </head>
 <body>
 
-<!-- ── SHARED NAV ── -->
+<!-- ── NAV ── -->
 <nav class="top-nav">
-  <a class="nav-logo" href="#">
+  <a class="nav-logo" href="index.html">
     <div class="logo-dot"></div>Visa<span>Tracker</span>
   </a>
-  <div class="nav-user">
-    <span id="navUserName" style="color:var(--muted);font-size:12.5px;"></span>
+  <div class="nav-right">
+    <span class="nav-user-name" id="navName"></span>
     <div class="nav-avatar" id="navAvatar">?</div>
+    <button class="logout-btn" onclick="doLogout()">Sign out</button>
   </div>
 </nav>
 
-<!-- ── STEP PROGRESS BAR ── -->
-<div class="step-bar" id="stepBar">
-  <div class="step-item active" id="si1">
-    <div class="step-num" id="sn1">1</div>
-    <span class="step-label">Application</span>
-  </div>
-  <div class="step-line" id="sl1"></div>
-  <div class="step-item" id="si2">
-    <div class="step-num" id="sn2">2</div>
-    <span class="step-label">Education</span>
-  </div>
-  <div class="step-line" id="sl2"></div>
-  <div class="step-item" id="si3">
-    <div class="step-num" id="sn3">3</div>
-    <span class="step-label">History & Evidence</span>
-  </div>
-  <div class="step-line" id="sl3"></div>
-  <div class="step-item" id="si4">
-    <div class="step-num" id="sn4">4</div>
-    <span class="step-label">Milestones</span>
-  </div>
-  <div class="step-prog" id="stepProg">Step 1 of 4</div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     STEP 1 — APPLICATION DETAILS
-════════════════════════════════════════════ -->
-<div class="page active" id="page-step1">
+<!-- ════════════════════════════
+     FORM PAGE
+════════════════════════════ -->
+<div class="page active" id="page-form">
   <div class="form-shell">
-    <div class="form-section-title">Application Details</div>
-    <div class="form-section-sub">Tell us about your visa application. This helps us match you with similar applicants.</div>
+    <div class="form-heading">Tell us about your application</div>
+    <div class="form-sub">Just a few details so we can show you accurate comparisons and processing time insights.</div>
 
-    <!-- Visa stream (locked) -->
+    <!-- Visa stream locked -->
     <div class="form-card">
       <div class="form-card-title">🎓 Visa Information</div>
-      <div class="fg-grid cols-1">
-        <div class="fg">
-          <label>Visa Stream</label>
-          <select disabled style="opacity:.5;cursor:not-allowed;">
-            <option>Higher Education Sector (Subclass 500)</option>
-          </select>
-          <span style="font-size:11px;color:var(--dim);margin-top:3px;">🔒 Other streams coming soon</span>
+      <div class="fg">
+        <label>Visa Stream</label>
+        <div class="locked-field">
+          Higher Education Sector — Subclass 500
+          <span class="locked-badge">🔒 Locked</span>
         </div>
       </div>
     </div>
 
-    <!-- Dates -->
+    <!-- Application dates -->
     <div class="form-card">
       <div class="form-card-title">📅 Application Dates</div>
       <div class="fg-grid">
@@ -433,9 +329,9 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
         </div>
         <div class="fg">
           <label>Visa grant date</label>
-          <div class="date-pair">
+          <div class="grant-row">
             <input type="date" id="grantDate"/>
-            <button class="still-waiting-btn" id="waitingBtn" onclick="toggleWaiting()">⏳ Still waiting</button>
+            <button type="button" class="waiting-toggle" id="waitingBtn" onclick="toggleWaiting()">⏳ Still waiting</button>
           </div>
         </div>
       </div>
@@ -445,24 +341,21 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
     <div class="form-card">
       <div class="form-card-title">🌏 Location & Passport</div>
       <div class="fg-grid">
-        <div class="fg">
+        <div class="fg full">
           <label>Application type *</label>
           <div class="radio-group" id="appTypeGroup">
-            <label class="radio-opt selected" onclick="selectRadio('appTypeGroup',this)"><input type="radio" name="appType" value="offshore" checked/>✈️ Offshore</label>
-            <label class="radio-opt" onclick="selectRadio('appTypeGroup',this)"><input type="radio" name="appType" value="onshore"/>🏠 Onshore</label>
-          </div>
-        </div>
-        <div class="fg">
-          <label>Lodged by *</label>
-          <div class="radio-group" id="lodgeByGroup">
-            <label class="radio-opt selected" onclick="selectRadio('lodgeByGroup',this)"><input type="radio" name="lodgeBy" value="self" checked/>👤 Myself</label>
-            <label class="radio-opt" onclick="selectRadio('lodgeByGroup',this)"><input type="radio" name="lodgeBy" value="agent"/>🏢 Migration Agent</label>
+            <label class="radio-opt selected" onclick="pick('appTypeGroup',this)">
+              <input type="radio" name="appType" value="offshore" checked/>✈️ Offshore
+            </label>
+            <label class="radio-opt" onclick="pick('appTypeGroup',this)">
+              <input type="radio" name="appType" value="onshore"/>🏠 Onshore
+            </label>
           </div>
         </div>
         <div class="fg">
           <label>Country of passport / citizenship *</label>
           <select id="passportCountry" required>
-            <option value="">Select country</option>
+            <option value="">Select country…</option>
             <option>Afghanistan</option><option>Australia</option><option>Bangladesh</option>
             <option>Brazil</option><option>Cambodia</option><option>China</option>
             <option>Colombia</option><option>Ethiopia</option><option>Fiji</option>
@@ -478,7 +371,7 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
         <div class="fg">
           <label>Country applying from *</label>
           <select id="applyingFrom" required>
-            <option value="">Select country</option>
+            <option value="">Select country…</option>
             <option>Australia</option><option>Bangladesh</option><option>Brazil</option>
             <option>Cambodia</option><option>China</option><option>Colombia</option>
             <option>Ethiopia</option><option>Fiji</option><option>Ghana</option>
@@ -494,340 +387,97 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
       </div>
     </div>
 
-    <div class="form-error" id="err1">Please fill in all required fields.</div>
-    <div class="form-nav">
-      <div></div>
-      <button class="btn-next" onclick="goStep(2)">Continue → Education Details</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     STEP 2 — EDUCATION DETAILS
-════════════════════════════════════════════ -->
-<div class="page" id="page-step2">
-  <div class="form-shell">
-    <div class="form-section-title">Education Details</div>
-    <div class="form-section-sub">Tell us about your course. This helps us compare you with students at the same institution and level.</div>
-
-    <div class="form-card">
-      <div class="form-card-title">🏫 Institution & Course</div>
-      <div class="fg-grid cols-1">
-        <div class="fg">
-          <label>Education provider / university *</label>
-          <input type="text" id="university" placeholder="e.g. University of Melbourne" list="uniList" required/>
-          <datalist id="uniList">
-            <option>Australian National University (ANU)</option>
-            <option>University of Melbourne</option>
-            <option>University of Sydney</option>
-            <option>University of Queensland (UQ)</option>
-            <option>UNSW Sydney</option>
-            <option>Monash University</option>
-            <option>University of Western Australia (UWA)</option>
-            <option>University of Adelaide</option>
-            <option>Queensland University of Technology (QUT)</option>
-            <option>Deakin University</option>
-            <option>RMIT University</option>
-            <option>University of Technology Sydney (UTS)</option>
-            <option>Macquarie University</option>
-            <option>Curtin University</option>
-            <option>Griffith University</option>
-            <option>La Trobe University</option>
-            <option>University of Newcastle</option>
-            <option>University of Wollongong</option>
-            <option>James Cook University</option>
-            <option>Flinders University</option>
-            <option>Other</option>
-          </datalist>
-        </div>
-        <div class="fg">
-          <label>Course name *</label>
-          <input type="text" id="courseName" placeholder="e.g. Master of Information Technology" required/>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-card">
-      <div class="form-card-title">📚 Course Level & Dates</div>
-      <div class="fg-grid">
-        <div class="fg span2">
-          <label>Course level *</label>
-          <div class="radio-group" id="courseLevelGroup">
-            <label class="radio-opt" onclick="selectRadio('courseLevelGroup',this)"><input type="radio" name="courseLevel" value="bachelor"/>🎓 Bachelor</label>
-            <label class="radio-opt" onclick="selectRadio('courseLevelGroup',this)"><input type="radio" name="courseLevel" value="master"/>🎓 Master</label>
-            <label class="radio-opt" onclick="selectRadio('courseLevelGroup',this)"><input type="radio" name="courseLevel" value="phd"/>🔬 PhD</label>
-            <label class="radio-opt" onclick="selectRadio('courseLevelGroup',this)"><input type="radio" name="courseLevel" value="grad-dip"/>📜 Graduate Diploma</label>
-            <label class="radio-opt" onclick="selectRadio('courseLevelGroup',this)"><input type="radio" name="courseLevel" value="other"/>Other</label>
-          </div>
-        </div>
-        <div class="fg">
-          <label>Course start date *</label>
-          <input type="date" id="courseStart" required/>
-        </div>
-        <div class="fg">
-          <label>Course duration</label>
-          <select id="courseDuration">
-            <option value="">Select</option>
-            <option value="6m">6 months</option>
-            <option value="1y">1 year</option>
-            <option value="1.5y">1.5 years</option>
-            <option value="2y">2 years</option>
-            <option value="3y">3 years</option>
-            <option value="4y">4 years</option>
-            <option value="5y+">5+ years</option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-error" id="err2">Please fill in all required fields.</div>
-    <div class="form-nav">
-      <button class="btn-back" onclick="goStep(1)">← Back</button>
-      <button class="btn-next" onclick="goStep(3)">Continue → History & Evidence</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     STEP 3 — HISTORY & EVIDENCE
-════════════════════════════════════════════ -->
-<div class="page" id="page-step3">
-  <div class="form-shell">
-    <div class="form-section-title">History & Evidence</div>
-    <div class="form-section-sub">Your previous visa history and evidence type helps us find the most accurate comparisons.</div>
-
-    <!-- Visa history -->
-    <div class="form-card">
-      <div class="form-card-title">📋 Australian Visa History</div>
-      <div class="fg-grid">
-        <div class="fg">
-          <label>First Australian visa application?</label>
-          <div class="radio-group" id="firstVisaGroup">
-            <label class="radio-opt selected" onclick="selectRadio('firstVisaGroup',this)"><input type="radio" name="firstVisa" value="yes" checked/>✅ Yes, first time</label>
-            <label class="radio-opt" onclick="selectRadio('firstVisaGroup',this)"><input type="radio" name="firstVisa" value="no"/>No, applied before</label>
-          </div>
-        </div>
-        <div class="fg">
-          <label>Previous Australian visas held?</label>
-          <div class="radio-group" id="prevVisaGroup">
-            <label class="radio-opt selected" onclick="selectRadio('prevVisaGroup',this)"><input type="radio" name="prevVisa" value="no" checked/>No</label>
-            <label class="radio-opt" onclick="selectRadio('prevVisaGroup',this)"><input type="radio" name="prevVisa" value="yes"/>Yes</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- English evidence -->
-    <div class="form-card">
-      <div class="form-card-title">🗣️ English Evidence</div>
-      <div class="fg-grid">
-        <div class="fg span2">
-          <label>English test type *</label>
-          <div class="radio-group" id="englishTestGroup">
-            <label class="radio-opt" onclick="selectRadio('englishTestGroup',this)"><input type="radio" name="englishTest" value="ielts"/>IELTS</label>
-            <label class="radio-opt" onclick="selectRadio('englishTestGroup',this)"><input type="radio" name="englishTest" value="pte"/>PTE Academic</label>
-            <label class="radio-opt" onclick="selectRadio('englishTestGroup',this)"><input type="radio" name="englishTest" value="toefl"/>TOEFL iBT</label>
-            <label class="radio-opt" onclick="selectRadio('englishTestGroup',this)"><input type="radio" name="englishTest" value="cambridge"/>Cambridge C1/C2</label>
-            <label class="radio-opt" onclick="selectRadio('englishTestGroup',this)"><input type="radio" name="englishTest" value="exempt"/>Exempt</label>
-            <label class="radio-opt" onclick="selectRadio('englishTestGroup',this)"><input type="radio" name="englishTest" value="other"/>Other</label>
-          </div>
-        </div>
-        <div class="fg">
-          <label>Overall score</label>
-          <input type="text" id="englishScore" placeholder="e.g. 7.0 / 79 / 95"/>
-        </div>
-        <div class="fg">
-          <label>Test date</label>
-          <input type="date" id="englishTestDate"/>
-        </div>
-      </div>
-    </div>
-
-    <!-- Financial evidence -->
-    <div class="form-card">
-      <div class="form-card-title">💰 Financial Evidence</div>
-      <div class="fg-grid">
-        <div class="fg span2">
-          <label>Financial capacity documents provided?</label>
-          <div class="radio-group" id="finDocsGroup">
-            <label class="radio-opt selected" onclick="selectRadio('finDocsGroup',this)"><input type="radio" name="finDocs" value="yes" checked/>✅ Yes</label>
-            <label class="radio-opt" onclick="selectRadio('finDocsGroup',this)"><input type="radio" name="finDocs" value="no"/>No</label>
-          </div>
-        </div>
-        <div class="fg span2">
-          <label>Funding type (select all that apply)</label>
-          <div class="check-group" id="fundingGroup">
-            <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" value="self"/>💼 Self-funded</label>
-            <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" value="loan"/>🏦 Education loan</label>
-            <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" value="sponsor"/>👨‍👩‍👧 Sponsor-funded</label>
-            <label class="check-opt" onclick="toggleCheck(this)"><input type="checkbox" value="scholarship"/>🎖️ Scholarship</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Current status -->
     <div class="form-card">
       <div class="form-card-title">📍 Current Application Status</div>
-      <div class="fg-grid cols-1">
-        <div class="fg">
-          <label>Where is your application right now? *</label>
-          <div class="radio-group" id="currentStatusGroup" style="flex-direction:column;align-items:flex-start;">
-            <label class="radio-opt" onclick="selectRadio('currentStatusGroup',this)" style="border-radius:var(--rsm);width:100%;"><input type="radio" name="currentStatus" value="lodged"/>📬 Lodged — waiting for initial processing</label>
-            <label class="radio-opt" onclick="selectRadio('currentStatusGroup',this)" style="border-radius:var(--rsm);width:100%;"><input type="radio" name="currentStatus" value="health"/>🏥 Health assessment pending</label>
-            <label class="radio-opt" onclick="selectRadio('currentStatusGroup',this)" style="border-radius:var(--rsm);width:100%;"><input type="radio" name="currentStatus" value="fir"/>📄 Further information requested</label>
-            <label class="radio-opt" onclick="selectRadio('currentStatusGroup',this)" style="border-radius:var(--rsm);width:100%;"><input type="radio" name="currentStatus" value="fis"/>✉️ Further information supplied</label>
-            <label class="radio-opt" onclick="selectRadio('currentStatusGroup',this)" style="border-radius:var(--rsm);width:100%;"><input type="radio" name="currentStatus" value="granted"/>✅ Granted</label>
-            <label class="radio-opt" onclick="selectRadio('currentStatusGroup',this)" style="border-radius:var(--rsm);width:100%;"><input type="radio" name="currentStatus" value="refused"/>❌ Refused</label>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-error" id="err3">Please fill in all required fields.</div>
-    <div class="form-nav">
-      <button class="btn-back" onclick="goStep(2)">← Back</button>
-      <button class="btn-next" onclick="goStep(4)">Continue → Milestones</button>
-    </div>
-  </div>
-</div>
-
-<!-- ════════════════════════════════════════════
-     STEP 4 — MILESTONES
-════════════════════════════════════════════ -->
-<div class="page" id="page-step4">
-  <div class="form-shell">
-    <div class="form-section-title">Your Milestones</div>
-    <div class="form-section-sub">Add dates as they happen — you can always come back and update these later.</div>
-
-    <div class="form-card">
-      <div class="form-card-title">📍 Key Dates</div>
-      <div style="font-size:12px;color:var(--dim);margin-bottom:1rem;">Leave blank if not yet reached. You can update these anytime from your dashboard.</div>
-      <div class="fg-grid">
-        <div class="fg">
-          <label>Biometrics date</label>
-          <input type="date" id="biometricsDate"/>
-        </div>
-        <div class="fg">
-          <label>Medical examination date</label>
-          <input type="date" id="medicalDate"/>
-        </div>
-        <div class="fg">
-          <label>Health clearance date</label>
-          <input type="date" id="healthClearDate"/>
-        </div>
-        <div class="fg">
-          <label>Further information requested</label>
-          <input type="date" id="firDate"/>
-        </div>
-        <div class="fg">
-          <label>Further information supplied</label>
-          <input type="date" id="fisDate"/>
-        </div>
-        <div class="fg">
-          <label>Refusal date (if applicable)</label>
-          <input type="date" id="refusalDate"/>
-        </div>
-      </div>
-    </div>
-
-    <div class="form-card" style="border-color:rgba(232,184,75,.2);background:rgba(232,184,75,.03);">
-      <div class="form-card-title" style="color:var(--muted);">💬 Additional notes (optional)</div>
       <div class="fg">
-        <label>Any other details about your application</label>
-        <textarea id="additionalNotes" placeholder="e.g. Had a request for additional documents on day 45, uploaded within 48 hours..."></textarea>
+        <label>Where is your application right now? *</label>
+        <div class="radio-group" id="statusGroup" style="flex-direction:column;">
+          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
+            <input type="radio" name="currentStatus" value="lodged"/>📬 Lodged — waiting for initial processing
+          </label>
+          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
+            <input type="radio" name="currentStatus" value="health"/>🏥 Health assessment pending
+          </label>
+          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
+            <input type="radio" name="currentStatus" value="fir"/>📄 Further information requested
+          </label>
+          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
+            <input type="radio" name="currentStatus" value="fis"/>✉️ Further information supplied
+          </label>
+          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
+            <input type="radio" name="currentStatus" value="granted"/>✅ Granted
+          </label>
+          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
+            <input type="radio" name="currentStatus" value="refused"/>❌ Refused
+          </label>
+        </div>
       </div>
     </div>
 
-    <div class="form-error" id="err4"></div>
-    <div class="form-nav">
-      <button class="btn-back" onclick="goStep(3)">← Back</button>
-      <button class="btn-submit" onclick="submitAll()">
-        🚀 Save & see my dashboard
-      </button>
-    </div>
+    <div class="form-error" id="formErr">Please fill in all required fields.</div>
+    <button class="btn-submit" onclick="submitForm()">Save & view my dashboard →</button>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     LOADING SCREEN
-════════════════════════════════════════════ -->
+<!-- ════════════════════════════
+     LOADING PAGE
+════════════════════════════ -->
 <div class="page" id="page-loading">
-  <div style="position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--black);text-align:center;padding:2rem;">
+  <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;">
     <div class="loading-ring"></div>
-    <div class="loading-title">Analysing your application…</div>
-    <div class="loading-sub">We're saving your data and preparing your personalised dashboard.</div>
+    <div class="loading-title">Setting up your dashboard…</div>
+    <div class="loading-sub">We're saving your details and preparing your personalised view.</div>
     <div class="loading-dots"><span></span><span></span><span></span></div>
     <div class="loading-steps">
-      <div class="loading-step active" id="ls1"><span class="loading-step-icon">💾</span> Saving your application data</div>
-      <div class="loading-step" id="ls2"><span class="loading-step-icon">📊</span> Finding similar applications</div>
-      <div class="loading-step" id="ls3"><span class="loading-step-icon">🗓️</span> Building your milestone timeline</div>
-      <div class="loading-step" id="ls4"><span class="loading-step-icon">✅</span> Almost ready!</div>
+      <div class="ls active" id="ls1">💾 Saving your application data</div>
+      <div class="ls" id="ls2">📊 Finding similar applications</div>
+      <div class="ls" id="ls3">🗓️ Building your timeline</div>
+      <div class="ls" id="ls4">✅ Almost ready!</div>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     WELCOME / DASHBOARD PAGE
-════════════════════════════════════════════ -->
+<!-- ════════════════════════════
+     WELCOME / SUMMARY PAGE
+════════════════════════════ -->
 <div class="page" id="page-welcome">
-  <nav class="top-nav" style="position:fixed;">
-    <a class="nav-logo" href="#"><div class="logo-dot"></div>Visa<span>Tracker</span></a>
-    <div class="nav-user">
-      <span id="navUserName2" style="color:var(--muted);font-size:12.5px;"></span>
-      <div class="nav-avatar" id="navAvatar2">?</div>
-    </div>
-  </nav>
+  <div class="welcome-shell">
 
-  <div class="welcome-shell" style="padding-top:5rem;">
-
-    <!-- Welcome hero -->
+    <!-- Hero -->
     <div class="welcome-hero">
-      <div class="welcome-tag">🎓 Student Visa · Subclass 500</div>
-      <div class="welcome-name">Welcome back, <span id="welcomeName">there</span>!</div>
-      <div class="welcome-sub" style="margin-bottom:1rem;">Here's a summary of your application. You can update your milestones anytime.</div>
-      <div id="elapsedBadge" class="days-badge green"><span class="days-dot"></span><span id="elapsedText">Calculating…</span></div>
-    </div>
-
-    <!-- Summary grid -->
-    <div class="summary-grid" id="summaryGrid">
-      <div class="summary-card">
-        <div class="summary-card-title">📋 Application Details</div>
-        <div id="summaryApp"></div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-card-title">🏫 Education</div>
-        <div id="summaryEdu"></div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-card-title">🗣️ Evidence</div>
-        <div id="summaryEvidence"></div>
-      </div>
-      <div class="summary-card">
-        <div class="summary-card-title">📍 Current Status</div>
-        <div id="summaryStatus"></div>
+      <div class="welcome-tag">🎓 Student Visa · Subclass 500 · Higher Education</div>
+      <div class="welcome-hi">Hi, <span id="welcomeName">there</span>!!</div>
+      <div class="welcome-desc">Here's a summary of your application. You can update your milestones anytime.</div>
+      <div id="daysBadge" class="days-badge green">
+        <span class="dot"></span>
+        <span id="daysText">Calculating…</span>
       </div>
     </div>
 
-    <!-- Milestone timeline -->
-    <div class="milestone-section">
-      <div class="milestone-title">📅 Application Timeline</div>
-      <div class="milestones" id="milestonesWrap"></div>
+    <!-- Application summary -->
+    <div class="summary-card">
+      <div class="summary-card-title">📋 Application Details</div>
+      <div id="summaryRows"></div>
+    </div>
+
+    <!-- Current status -->
+    <div class="summary-card">
+      <div class="summary-card-title">📍 Current Status</div>
+      <div style="padding:.5rem 0;" id="statusDisplay"></div>
     </div>
 
     <!-- Edit link -->
-    <div style="text-align:center;margin-bottom:2rem;">
-      <a class="edit-link" onclick="goStep(1)">✏️ Edit my application details</a>
-    </div>
+    <div class="edit-link" onclick="showForm()">✏️ Update my application details</div>
 
     <!-- Analyse CTA -->
     <div class="analyse-wrap">
-      <div style="font-size:2rem;margin-bottom:.75rem;">✦</div>
+      <div style="font-size:2rem;margin-bottom:.6rem;">✦</div>
       <div class="analyse-title">Ready to see how you compare?</div>
-      <div class="analyse-sub">We'll analyse your application against thousands of similar cases and show you grant probability, country comparisons, university rankings and more.</div>
-      <button class="btn-analyse" onclick="goAnalytics()">
+      <div class="analyse-sub">We'll analyse your application against similar cases and show you processing time insights, grant probability and more.</div>
+      <button class="btn-analyse" onclick="window.location.href='analytics.html'">
         Analyse my data &amp; predict my grant
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </button>
     </div>
 
@@ -835,194 +485,154 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
 </div>
 
 <script>
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════
 //  SUPABASE
-// ═══════════════════════════════════════════════
-const SURL = 'https://abtabfagggjpxecxzprc.supabase.co';
-const SKEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFidGFiZmFnZ2dqcHhlY3h6cHJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTI2ODYsImV4cCI6MjA5MzM4ODY4Nn0.tbUX661ZHCSdtkO_yhKSnNxPxWOBpah7lkVyDEqNBFs';
-const sb = supabase.createClient(SURL, SKEY);
+// ══════════════════════════════════════
+const sb = supabase.createClient(
+  'https://abtabfagggjpxecxzprc.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFidGFiZmFnZ2dqcHhlY3h6cHJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTI2ODYsImV4cCI6MjA5MzM4ODY4Nn0.tbUX661ZHCSdtkO_yhKSnNxPxWOBpah7lkVyDEqNBFs'
+);
 
 let currentUser = null;
-let formData = {};
-let currentStep = 1;
-let grantStillWaiting = false;
+let savedData   = null;
+let stillWaiting = false;
 
-// ── Auth check on load ──
+// ══════════════════════════════════════
+//  BOOT
+// ══════════════════════════════════════
 window.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await sb.auth.getSession();
   if (!session?.user) {
-    // Not logged in — redirect to main site
     window.location.href = 'index.html';
     return;
   }
   currentUser = session.user;
-  const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
-  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-  document.getElementById('navUserName').textContent = name;
-  document.getElementById('navAvatar').textContent = initials;
-  document.getElementById('navUserName2').textContent = name;
-  document.getElementById('navAvatar2').textContent = initials;
+  setNavUser();
 
-  // Check if user already has a profile
-  const { data: profile } = await sb
+  // Check for existing profile
+  const { data } = await sb
     .from('student_applications')
     .select('*')
     .eq('user_id', currentUser.id)
-    .single();
+    .maybeSingle();
 
-  if (profile) {
-    // Returning user — load their data and show welcome
-    formData = profile;
-    showWelcomePage(name);
+  if (data) {
+    savedData = data;
+    prefillForm(data);
+    showWelcome(data);
   }
-  // else: new user — stay on step 1
+  // else: stay on form
 });
 
-// ═══════════════════════════════════════════════
-//  STEP NAVIGATION
-// ═══════════════════════════════════════════════
+function setNavUser() {
+  const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
+  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  document.getElementById('navName').textContent = name;
+  document.getElementById('navAvatar').textContent = initials;
+}
+
+// ══════════════════════════════════════
+//  LOGOUT
+// ══════════════════════════════════════
+async function doLogout() {
+  await sb.auth.signOut();
+  window.location.href = 'index.html';
+}
+
+// ══════════════════════════════════════
+//  FORM HELPERS
+// ══════════════════════════════════════
+function pick(groupId, el) {
+  document.querySelectorAll('#' + groupId + ' .radio-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function radioVal(name) {
+  const el = document.querySelector(`input[name="${name}"]:checked`);
+  return el ? el.value : null;
+}
+function toggleWaiting() {
+  stillWaiting = !stillWaiting;
+  const btn = document.getElementById('waitingBtn');
+  const inp = document.getElementById('grantDate');
+  btn.classList.toggle('on', stillWaiting);
+  inp.disabled = stillWaiting;
+  if (stillWaiting) inp.value = '';
+}
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   window.scrollTo(0, 0);
 }
+function showForm() { showPage('page-form'); }
+function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
-function updateStepBar(step) {
-  for (let i = 1; i <= 4; i++) {
-    const si = document.getElementById('si' + i);
-    const sn = document.getElementById('sn' + i);
-    si.className = 'step-item';
-    if (i < step) { si.classList.add('done'); sn.textContent = '✓'; }
-    else if (i === step) { si.classList.add('active'); sn.textContent = i; }
-    else { sn.textContent = i; }
-    if (i < 4) {
-      document.getElementById('sl' + i).className = 'step-line' + (i < step ? ' done' : '');
-    }
+// Pre-fill form for returning users
+function prefillForm(d) {
+  if (d.lodge_date) document.getElementById('lodgeDate').value = d.lodge_date;
+  if (d.grant_date) document.getElementById('grantDate').value = d.grant_date;
+  if (d.still_waiting) { stillWaiting = true; document.getElementById('waitingBtn').classList.add('on'); document.getElementById('grantDate').disabled = true; }
+  if (d.passport_country) document.getElementById('passportCountry').value = d.passport_country;
+  if (d.applying_from) document.getElementById('applyingFrom').value = d.applying_from;
+  if (d.app_type) {
+    document.querySelectorAll('#appTypeGroup .radio-opt').forEach(o => {
+      const inp = o.querySelector('input');
+      if (inp.value === d.app_type) { o.classList.add('selected'); inp.checked = true; }
+      else { o.classList.remove('selected'); inp.checked = false; }
+    });
   }
-  document.getElementById('stepProg').textContent = `Step ${step} of 4`;
-  currentStep = step;
+  if (d.current_status) {
+    document.querySelectorAll('#statusGroup .radio-opt').forEach(o => {
+      const inp = o.querySelector('input');
+      if (inp.value === d.current_status) { o.classList.add('selected'); inp.checked = true; }
+      else { o.classList.remove('selected'); inp.checked = false; }
+    });
+  }
 }
 
-function goStep(step) {
-  // Validate current step before moving forward
-  if (step > currentStep) {
-    if (!validateStep(currentStep)) return;
-    collectStep(currentStep);
-  }
-  updateStepBar(step);
-  showPage('page-step' + step);
-}
-
-function validateStep(step) {
-  const errEl = document.getElementById('err' + step);
+// ══════════════════════════════════════
+//  SUBMIT
+// ══════════════════════════════════════
+async function submitForm() {
+  const errEl = document.getElementById('formErr');
   errEl.style.display = 'none';
 
-  if (step === 1) {
-    if (!document.getElementById('lodgeDate').value) {
-      errEl.textContent = 'Please enter your application lodged date.';
-      errEl.style.display = 'block'; return false;
-    }
-    if (!document.getElementById('passportCountry').value) {
-      errEl.textContent = 'Please select your passport country.';
-      errEl.style.display = 'block'; return false;
-    }
-    if (!document.getElementById('applyingFrom').value) {
-      errEl.textContent = 'Please select the country you are applying from.';
-      errEl.style.display = 'block'; return false;
-    }
-  }
-  if (step === 2) {
-    if (!document.getElementById('university').value) {
-      errEl.textContent = 'Please enter your education provider.';
-      errEl.style.display = 'block'; return false;
-    }
-    if (!document.getElementById('courseName').value) {
-      errEl.textContent = 'Please enter your course name.';
-      errEl.style.display = 'block'; return false;
-    }
-    if (!getRadioVal('courseLevel')) {
-      errEl.textContent = 'Please select your course level.';
-      errEl.style.display = 'block'; return false;
-    }
-    if (!document.getElementById('courseStart').value) {
-      errEl.textContent = 'Please enter your course start date.';
-      errEl.style.display = 'block'; return false;
-    }
-  }
-  if (step === 3) {
-    if (!getRadioVal('currentStatus')) {
-      errEl.textContent = 'Please select your current application status.';
-      errEl.style.display = 'block'; return false;
-    }
-  }
-  return true;
-}
+  const lodgeDate      = document.getElementById('lodgeDate').value;
+  const grantDate      = document.getElementById('grantDate').value;
+  const passportCountry = document.getElementById('passportCountry').value;
+  const applyingFrom   = document.getElementById('applyingFrom').value;
+  const appType        = radioVal('appType');
+  const currentStatus  = radioVal('currentStatus');
 
-function collectStep(step) {
-  if (step === 1) {
-    formData.lodge_date        = document.getElementById('lodgeDate').value;
-    formData.grant_date        = grantStillWaiting ? null : document.getElementById('grantDate').value || null;
-    formData.still_waiting     = grantStillWaiting;
-    formData.app_type          = getRadioVal('appType') || 'offshore';
-    formData.lodged_by         = getRadioVal('lodgeBy') || 'self';
-    formData.passport_country  = document.getElementById('passportCountry').value;
-    formData.applying_from     = document.getElementById('applyingFrom').value;
-  }
-  if (step === 2) {
-    formData.university        = document.getElementById('university').value;
-    formData.course_name       = document.getElementById('courseName').value;
-    formData.course_level      = getRadioVal('courseLevel');
-    formData.course_start      = document.getElementById('courseStart').value;
-    formData.course_duration   = document.getElementById('courseDuration').value;
-  }
-  if (step === 3) {
-    formData.first_visa        = getRadioVal('firstVisa');
-    formData.prev_visa         = getRadioVal('prevVisa');
-    formData.english_test      = getRadioVal('englishTest');
-    formData.english_score     = document.getElementById('englishScore').value;
-    formData.english_test_date = document.getElementById('englishTestDate').value || null;
-    formData.fin_docs          = getRadioVal('finDocs');
-    formData.funding_types     = getChecked('fundingGroup');
-    formData.current_status    = getRadioVal('currentStatus');
-  }
-  if (step === 4) {
-    formData.biometrics_date   = document.getElementById('biometricsDate').value || null;
-    formData.medical_date      = document.getElementById('medicalDate').value || null;
-    formData.health_clear_date = document.getElementById('healthClearDate').value || null;
-    formData.fir_date          = document.getElementById('firDate').value || null;
-    formData.fis_date          = document.getElementById('fisDate').value || null;
-    formData.refusal_date      = document.getElementById('refusalDate').value || null;
-    formData.additional_notes  = document.getElementById('additionalNotes').value;
-  }
-}
-
-// ═══════════════════════════════════════════════
-//  SUBMIT
-// ═══════════════════════════════════════════════
-async function submitAll() {
-  if (!validateStep(4)) return;
-  collectStep(4);
+  if (!lodgeDate)       { errEl.textContent = 'Please enter your application lodged date.'; errEl.style.display='block'; return; }
+  if (!passportCountry) { errEl.textContent = 'Please select your passport country.'; errEl.style.display='block'; return; }
+  if (!applyingFrom)    { errEl.textContent = 'Please select the country you are applying from.'; errEl.style.display='block'; return; }
+  if (!currentStatus)   { errEl.textContent = 'Please select your current application status.'; errEl.style.display='block'; return; }
 
   // Show loading
-  document.getElementById('stepBar').style.display = 'none';
   showPage('page-loading');
 
-  // Animate loading steps
+  // Animate steps
   const steps = ['ls1','ls2','ls3','ls4'];
   for (let i = 0; i < steps.length; i++) {
     await delay(1100);
-    if (i > 0) document.getElementById(steps[i-1]).classList.replace('active','done');
-    document.getElementById(steps[i]).classList.add('active');
+    if (i > 0) { document.getElementById(steps[i-1]).className='ls done'; }
+    document.getElementById(steps[i]).className='ls active';
   }
-  await delay(900);
+  await delay(800);
 
   // Save to Supabase
   const payload = {
-    ...formData,
     user_id: currentUser.id,
     user_email: currentUser.email,
     visa_subclass: '500',
     visa_stream: 'higher_education',
+    lodge_date: lodgeDate,
+    grant_date: stillWaiting ? null : (grantDate || null),
+    still_waiting: stillWaiting,
+    app_type: appType || 'offshore',
+    passport_country: passportCountry,
+    applying_from: applyingFrom,
+    current_status: currentStatus,
     updated_at: new Date().toISOString()
   };
 
@@ -1030,169 +640,69 @@ async function submitAll() {
     .from('student_applications')
     .upsert(payload, { onConflict: 'user_id' });
 
-  if (error) {
-    console.error('Save error:', error);
-    // Still show welcome — don't block on DB errors during beta
-  }
+  if (error) console.error('Supabase error:', error);
 
-  const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
-  showWelcomePage(name);
+  savedData = payload;
+  showWelcome(payload);
 }
 
-// ═══════════════════════════════════════════════
+// ══════════════════════════════════════
 //  WELCOME PAGE
-// ═══════════════════════════════════════════════
-function showWelcomePage(name) {
-  document.getElementById('stepBar').style.display = 'none';
+// ══════════════════════════════════════
+function showWelcome(d) {
+  const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
   document.getElementById('welcomeName').textContent = name.split(' ')[0];
 
-  // Elapsed days badge
-  if (formData.lodge_date) {
-    const days = Math.round((Date.now() - new Date(formData.lodge_date)) / 86400000);
-    const badge = document.getElementById('elapsedBadge');
-    const text  = document.getElementById('elapsedText');
-    text.textContent = `Day ${days} since lodgement`;
-    badge.className = 'days-badge ' + (days <= 45 ? 'green' : days <= 90 ? 'amber' : 'red');
+  // Days elapsed badge
+  if (d.lodge_date) {
+    const days = Math.round((Date.now() - new Date(d.lodge_date)) / 86400000);
+    const badge = document.getElementById('daysBadge');
+    const txt   = document.getElementById('daysText');
+    txt.textContent = `Day ${days} of your application`;
+    badge.className = 'days-badge ' + (days <= 45 ? 'green' : days <= 90 ? 'amber' : 'red-b');
   }
 
-  // Summary cards
-  buildSummaryApp();
-  buildSummaryEdu();
-  buildSummaryEvidence();
-  buildSummaryStatus();
+  // Summary rows
+  const statusLabels = {
+    lodged:'📬 Lodged — waiting for processing',
+    health:'🏥 Health assessment pending',
+    fir:'📄 Further information requested',
+    fis:'✉️ Further information supplied',
+    granted:'✅ Granted',
+    refused:'❌ Refused'
+  };
+  const statusClasses = {
+    lodged:'status-lodged',health:'status-health',fir:'status-fir',
+    fis:'status-fis',granted:'status-granted',refused:'status-refused'
+  };
 
-  // Milestones
-  buildMilestones();
+  const rows = [
+    ['Lodged date',    fmtDate(d.lodge_date)],
+    ['Grant date',     d.still_waiting ? '⏳ Still waiting' : (fmtDate(d.grant_date) || '—')],
+    ['Application',    d.app_type === 'onshore' ? '🏠 Onshore' : '✈️ Offshore'],
+    ['Passport',       d.passport_country],
+    ['Applying from',  d.applying_from],
+    ['Visa stream',    'Higher Education Sector'],
+  ];
+
+  document.getElementById('summaryRows').innerHTML = rows
+    .filter(r => r[1])
+    .map(r => `<div class="srow"><span class="srow-label">${r[0]}</span><span class="srow-val">${r[1]}</span></div>`)
+    .join('');
+
+  // Status display
+  const st = d.current_status || 'lodged';
+  document.getElementById('statusDisplay').innerHTML =
+    `<span class="status-display ${statusClasses[st] || ''}">${statusLabels[st] || st}</span>`;
 
   showPage('page-welcome');
 }
 
-function summaryRow(label, val) {
-  if (!val) return '';
-  return `<div class="summary-row"><span class="summary-row-label">${label}</span><span class="summary-row-val">${val}</span></div>`;
+function fmtDate(ds) {
+  if (!ds) return null;
+  try { return new Date(ds).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); }
+  catch { return ds; }
 }
-
-function buildSummaryApp() {
-  const d = formData;
-  document.getElementById('summaryApp').innerHTML =
-    summaryRow('Lodged', fmt(d.lodge_date)) +
-    summaryRow('Grant date', d.still_waiting ? '⏳ Still waiting' : fmt(d.grant_date)) +
-    summaryRow('Type', d.app_type === 'onshore' ? '🏠 Onshore' : '✈️ Offshore') +
-    summaryRow('Passport', d.passport_country) +
-    summaryRow('Applying from', d.applying_from) +
-    summaryRow('Lodged by', d.lodged_by === 'agent' ? '🏢 Migration Agent' : '👤 Self');
-}
-function buildSummaryEdu() {
-  const d = formData;
-  document.getElementById('summaryEdu').innerHTML =
-    summaryRow('University', d.university) +
-    summaryRow('Course', d.course_name) +
-    summaryRow('Level', levelLabel(d.course_level)) +
-    summaryRow('Start date', fmt(d.course_start)) +
-    summaryRow('Duration', d.course_duration);
-}
-function buildSummaryEvidence() {
-  const d = formData;
-  const funding = Array.isArray(d.funding_types) ? d.funding_types.join(', ') : d.funding_types;
-  document.getElementById('summaryEvidence').innerHTML =
-    summaryRow('English test', (d.english_test || '').toUpperCase()) +
-    summaryRow('Score', d.english_score) +
-    summaryRow('Financial docs', d.fin_docs === 'yes' ? '✅ Provided' : '—') +
-    summaryRow('Funding', funding);
-}
-function buildSummaryStatus() {
-  const d = formData;
-  const statusMap = {
-    lodged:'📬 Lodged',health:'🏥 Health Assessment',
-    fir:'📄 Info Requested',fis:'✉️ Info Supplied',
-    granted:'✅ Granted',refused:'❌ Refused'
-  };
-  const firstVisa = d.first_visa === 'yes' ? '✅ Yes, first time' : 'No';
-  document.getElementById('summaryStatus').innerHTML =
-    summaryRow('Current status', statusMap[d.current_status] || d.current_status) +
-    summaryRow('First AU visa', firstVisa) +
-    summaryRow('Previous AU visas', d.prev_visa === 'yes' ? 'Yes' : 'No');
-}
-
-function buildMilestones() {
-  const d = formData;
-  const milestones = [
-    { name:'Application Lodged',         date:d.lodge_date,        icon:'📬', alwaysDone:true },
-    { name:'Biometrics Collection',       date:d.biometrics_date,   icon:'🤚' },
-    { name:'Medical Examination',         date:d.medical_date,      icon:'🏥' },
-    { name:'Health Clearance',            date:d.health_clear_date, icon:'✅' },
-    { name:'Further Information Requested', date:d.fir_date,        icon:'📄' },
-    { name:'Further Information Supplied',  date:d.fis_date,        icon:'✉️' },
-    { name:'Grant / Refusal',             date:d.grant_date || d.refusal_date, icon: d.grant_date ? '🎉' : d.refusal_date ? '❌' : '⏳' },
-  ];
-
-  // Find the last done index to determine active
-  let lastDoneIdx = -1;
-  milestones.forEach((m, i) => { if (m.date || m.alwaysDone) lastDoneIdx = i; });
-  const activeIdx = lastDoneIdx + 1 < milestones.length ? lastDoneIdx + 1 : -1;
-
-  document.getElementById('milestonesWrap').innerHTML = milestones.map((m, i) => {
-    const isDone    = m.date || m.alwaysDone;
-    const isActive  = !isDone && i === activeIdx;
-    const dotClass  = isDone ? 'done' : isActive ? 'active' : 'waiting';
-    const dotIcon   = isDone ? '✓' : isActive ? '⏳' : '○';
-    const badge     = isDone
-      ? `<span class="m-badge badge-done">✓ ${fmt(m.date) || 'Completed'}</span>`
-      : isActive
-      ? `<span class="m-badge badge-active">⏳ Current stage</span>`
-      : `<span class="m-badge badge-none">Not yet reached</span>`;
-
-    return `
-      <div class="milestone-node">
-        <div class="m-dot ${dotClass}">${dotIcon}</div>
-        <div class="m-info">
-          <div class="m-name">${m.icon} ${m.name}</div>
-          <div class="m-date">${m.date ? fmt(m.date) : isActive ? 'In progress' : 'Awaiting'}</div>
-          ${badge}
-        </div>
-      </div>`;
-  }).join('');
-}
-
-function goAnalytics() {
-  // Phase 3 — redirect to analytics page
-  window.location.href = 'analytics.html';
-}
-
-// ═══════════════════════════════════════════════
-//  UI HELPERS
-// ═══════════════════════════════════════════════
-function selectRadio(groupId, el) {
-  document.querySelectorAll('#' + groupId + ' .radio-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
-}
-function toggleCheck(el) { el.classList.toggle('selected'); }
-function getRadioVal(name) {
-  const el = document.querySelector(`input[name="${name}"]:checked`);
-  return el ? el.value : null;
-}
-function getChecked(groupId) {
-  return [...document.querySelectorAll(`#${groupId} .check-opt.selected input`)].map(i => i.value);
-}
-function toggleWaiting() {
-  grantStillWaiting = !grantStillWaiting;
-  const btn = document.getElementById('waitingBtn');
-  const inp = document.getElementById('grantDate');
-  btn.classList.toggle('active', grantStillWaiting);
-  inp.disabled = grantStillWaiting;
-  if (grantStillWaiting) inp.value = '';
-}
-function fmt(dateStr) {
-  if (!dateStr) return null;
-  try {
-    return new Date(dateStr).toLocaleDateString('en-AU', {day:'numeric',month:'short',year:'numeric'});
-  } catch { return dateStr; }
-}
-function levelLabel(v) {
-  const map = {bachelor:'Bachelor',master:"Master's",phd:'PhD','grad-dip':'Graduate Diploma',other:'Other'};
-  return map[v] || v;
-}
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 </script>
 </body>
 </html>
