@@ -18,323 +18,244 @@
   --blue:#4a9eff;--blue-dim:rgba(74,158,255,0.1);
   --orange:#ff8c42;--orange-dim:rgba(255,140,66,0.1);
   --red:#ff5555;--red-dim:rgba(255,85,85,0.1);
+  --purple:#a78bfa;
   --r:14px;--rsm:8px;
 }
 body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--text);min-height:100vh;}
-
 .page{display:none;min-height:100vh;}
 .page.active{display:block;}
 
-/* ── NAV ── */
+/* NAV */
 .top-nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   display:flex;align-items:center;justify-content:space-between;
   padding:1rem 2.5rem;
-  background:rgba(7,7,9,0.9);backdrop-filter:blur(12px);
+  background:rgba(7,7,9,0.92);backdrop-filter:blur(12px);
   border-bottom:1px solid var(--border);
 }
-.nav-logo{
-  font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;
-  display:flex;align-items:center;gap:7px;
-  text-decoration:none;color:var(--text);
-}
+.nav-logo{font-family:'Nunito',sans-serif;font-size:1.2rem;font-weight:800;display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--text);}
 .nav-logo span{color:var(--gold);}
 .logo-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;box-shadow:0 0 8px var(--gold-glow);}
-.nav-right{display:flex;align-items:center;gap:12px;}
-.nav-user-name{font-size:12.5px;color:var(--muted);}
-.nav-avatar{
-  width:30px;height:30px;background:var(--gold-dim);
-  border:1px solid rgba(232,184,75,.3);border-radius:50%;
-  display:flex;align-items:center;justify-content:center;
-  font-size:11px;font-weight:800;color:var(--gold);
-}
-.logout-btn{
-  padding:6px 16px;background:transparent;
-  border:1px solid var(--border2);border-radius:99px;
-  color:var(--muted);font-family:'Nunito',sans-serif;
-  font-size:12px;font-weight:700;cursor:pointer;
-  transition:all .15s;
-}
+.nav-right{display:flex;align-items:center;gap:10px;}
+.nav-uname{font-size:12.5px;color:var(--muted);}
+.nav-avatar{width:30px;height:30px;background:var(--gold-dim);border:1px solid rgba(232,184,75,.3);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:var(--gold);}
+.logout-btn{padding:6px 16px;background:transparent;border:1px solid var(--border2);border-radius:99px;color:var(--muted);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;transition:all .15s;}
 .logout-btn:hover{border-color:var(--red);color:var(--red);}
 
-/* ── FORM SHELL ── */
-.form-shell{
-  max-width:620px;margin:0 auto;
-  padding:7rem 1.5rem 3rem;
-}
-.form-heading{
-  font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:900;
-  margin-bottom:.4rem;
-}
+/* FORM */
+.form-shell{max-width:640px;margin:0 auto;padding:7rem 1.5rem 3rem;}
+.form-heading{font-family:'Nunito',sans-serif;font-size:1.7rem;font-weight:900;margin-bottom:.4rem;}
 .form-sub{font-size:13.5px;color:var(--muted);margin-bottom:2rem;line-height:1.6;}
-
-.form-card{
-  background:var(--surface);border:1px solid var(--border2);
-  border-radius:var(--r);padding:1.75rem;margin-bottom:1.25rem;
-}
-.form-card-title{
-  font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;
-  color:var(--gold);margin-bottom:1.25rem;
-  display:flex;align-items:center;gap:8px;
-}
+.form-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.75rem;margin-bottom:1.25rem;}
+.form-card-title{font-family:'Nunito',sans-serif;font-size:.9rem;font-weight:800;color:var(--gold);margin-bottom:1.25rem;display:flex;align-items:center;gap:8px;}
 .fg-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
 .fg{display:flex;flex-direction:column;gap:6px;}
 .fg.full{grid-column:span 2;}
 .fg label{font-size:11.5px;font-weight:700;color:var(--muted);letter-spacing:.3px;}
-.fg input,.fg select{
-  padding:10px 13px;
-  background:var(--surface2);
-  border:1px solid var(--border);
-  border-radius:var(--rsm);
-  color:var(--text);
-  font-family:'Nunito Sans',sans-serif;font-size:13.5px;
-  outline:none;transition:border-color .15s,box-shadow .15s;width:100%;
-}
-.fg input:focus,.fg select:focus{
-  border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,184,75,.08);
-}
+.fg input,.fg select{padding:10px 13px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);color:var(--text);font-family:'Nunito Sans',sans-serif;font-size:13.5px;outline:none;transition:border-color .15s,box-shadow .15s;width:100%;}
+.fg input:focus,.fg select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,184,75,.08);}
+.fg input:disabled{opacity:.35;cursor:not-allowed;}
 .fg select option{background:var(--surface2);}
+
+/* date + toggle row */
+.date-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:end;}
+.sw-btn{padding:9px 13px;height:42px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);font-family:'Nunito',sans-serif;font-size:11.5px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap;}
+.sw-btn.on{background:var(--blue-dim);border-color:rgba(74,158,255,.3);color:var(--blue);}
 
 /* Radio pills */
 .radio-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:2px;}
-.radio-opt{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 14px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:99px;font-size:12.5px;font-weight:600;color:var(--muted);
-  cursor:pointer;transition:all .15s;user-select:none;
-}
+.radio-opt{display:flex;align-items:center;gap:6px;padding:7px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:12.5px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;user-select:none;}
 .radio-opt input{display:none;}
-.radio-opt.selected{background:var(--gold-dim);border-color:rgba(232,184,75,.35);color:var(--gold);}
+.radio-opt.sel{background:var(--gold-dim);border-color:rgba(232,184,75,.35);color:var(--gold);}
 .radio-opt:hover{border-color:var(--gold);color:var(--gold);}
-.radio-opt.full-width{border-radius:var(--rsm);width:100%;}
+.radio-opt.fw{border-radius:var(--rsm);width:100%;}
 
-/* Grant date toggle */
-.grant-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:end;}
-.waiting-toggle{
-  padding:10px 14px;height:42px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:var(--rsm);font-family:'Nunito Sans',sans-serif;
-  font-size:12px;font-weight:700;color:var(--muted);
-  cursor:pointer;transition:all .15s;white-space:nowrap;
-}
-.waiting-toggle.on{background:var(--blue-dim);border-color:rgba(74,158,255,.3);color:var(--blue);}
+.locked-field{padding:10px 13px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:var(--rsm);color:var(--dim);font-size:13.5px;display:flex;align-items:center;justify-content:space-between;}
+.locked-tag{font-size:10px;font-weight:700;color:var(--dim);padding:2px 8px;border-radius:99px;background:var(--surface3);}
 
-/* Locked field */
-.locked-field{
-  padding:10px 13px;
-  background:rgba(255,255,255,.03);
-  border:1px solid var(--border);
-  border-radius:var(--rsm);
-  color:var(--dim);font-size:13.5px;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.locked-badge{
-  font-size:10px;font-weight:700;color:var(--dim);
-  padding:2px 8px;border-radius:99px;
-  background:var(--surface3);
-}
-
-/* Submit button */
-.btn-submit{
-  width:100%;padding:14px;
-  background:var(--gold);border:none;border-radius:var(--rsm);
-  color:#000;font-family:'Nunito',sans-serif;
-  font-size:14px;font-weight:800;cursor:pointer;
-  transition:all .2s;box-shadow:0 4px 20px var(--gold-glow);
-  margin-top:.5rem;
-}
+.form-error{padding:10px 14px;background:var(--red-dim);color:var(--red);border-radius:var(--rsm);font-size:12.5px;font-weight:600;margin-top:10px;display:none;}
+.btn-submit{width:100%;padding:14px;background:var(--gold);border:none;border-radius:var(--rsm);color:#000;font-family:'Nunito',sans-serif;font-size:14px;font-weight:800;cursor:pointer;transition:all .2s;box-shadow:0 4px 20px var(--gold-glow);margin-top:.5rem;}
 .btn-submit:hover{opacity:.88;transform:translateY(-1px);}
 
-/* Error */
-.form-error{
-  padding:10px 14px;background:var(--red-dim);color:var(--red);
-  border-radius:var(--rsm);font-size:12.5px;font-weight:600;
-  margin-top:10px;display:none;
-}
-
-/* ── LOADING ── */
-#page-loading{
-  min-height:100vh;background:var(--black);
-  display:none;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:2rem;
-}
+/* LOADING */
+#page-loading{min-height:100vh;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;}
 #page-loading.active{display:flex;}
-.loading-ring{
-  width:68px;height:68px;margin-bottom:1.75rem;
-  border:4px solid var(--surface2);
-  border-top:4px solid var(--gold);
-  border-radius:50%;animation:spin 1s linear infinite;
-}
+.loading-ring{width:68px;height:68px;margin-bottom:1.75rem;border:4px solid var(--surface2);border-top:4px solid var(--gold);border-radius:50%;animation:spin 1s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-title{font-family:'Nunito',sans-serif;font-size:1.4rem;font-weight:800;margin-bottom:.5rem;}
 .loading-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:340px;}
 .loading-dots{display:flex;gap:6px;justify-content:center;margin-top:1.5rem;}
-.loading-dots span{
-  width:8px;height:8px;border-radius:50%;background:var(--gold);opacity:.3;
-  animation:db 1.2s ease infinite;
-}
+.loading-dots span{width:8px;height:8px;border-radius:50%;background:var(--gold);opacity:.3;animation:db 1.2s ease infinite;}
 .loading-dots span:nth-child(2){animation-delay:.2s;}
 .loading-dots span:nth-child(3){animation-delay:.4s;}
 @keyframes db{0%,80%,100%{opacity:.3;transform:scale(.85)}40%{opacity:1;transform:scale(1.2)}}
-.loading-steps{
-  margin-top:2rem;display:flex;flex-direction:column;gap:10px;
-  max-width:280px;text-align:left;
-}
+.loading-steps{margin-top:2rem;display:flex;flex-direction:column;gap:10px;max-width:280px;text-align:left;}
 .ls{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--dim);transition:color .3s;}
 .ls.active{color:var(--text);}
 .ls.done{color:var(--green);}
 
-/* ── WELCOME PAGE ── */
-.welcome-shell{max-width:680px;margin:0 auto;padding:6rem 1.5rem 3rem;}
-
-.welcome-hero{
-  background:linear-gradient(135deg,#0f0f1e 0%,#1a1040 100%);
-  border:1px solid rgba(232,184,75,.15);
-  border-radius:20px;padding:2rem 2.5rem;margin-bottom:1.5rem;
-  position:relative;overflow:hidden;
-}
-.welcome-hero::after{
-  content:'';position:absolute;top:-50px;right:-50px;
-  width:200px;height:200px;
-  background:radial-gradient(circle,rgba(232,184,75,.08),transparent 70%);
-  border-radius:50%;pointer-events:none;
-}
-.welcome-tag{
-  display:inline-block;background:var(--gold-dim);color:var(--gold);
-  font-size:10.5px;font-weight:800;padding:3px 12px;
-  border-radius:99px;border:1px solid rgba(232,184,75,.2);
-  margin-bottom:.75rem;
-}
-.welcome-hi{font-family:'Nunito',sans-serif;font-size:1.75rem;font-weight:900;margin-bottom:.3rem;}
+/* WELCOME */
+.welcome-shell{max-width:700px;margin:0 auto;padding:6rem 1.5rem 4rem;}
+.welcome-hero{background:linear-gradient(135deg,#0f0f1e,#1a1040);border:1px solid rgba(232,184,75,.15);border-radius:20px;padding:2rem 2.5rem;margin-bottom:1.75rem;position:relative;overflow:hidden;}
+.welcome-hero::after{content:'';position:absolute;top:-50px;right:-50px;width:200px;height:200px;background:radial-gradient(circle,rgba(232,184,75,.08),transparent 70%);border-radius:50%;pointer-events:none;}
+.welcome-tag{display:inline-block;background:var(--gold-dim);color:var(--gold);font-size:10.5px;font-weight:800;padding:3px 12px;border-radius:99px;border:1px solid rgba(232,184,75,.2);margin-bottom:.75rem;}
+.welcome-hi{font-family:'Nunito',sans-serif;font-size:1.8rem;font-weight:900;margin-bottom:.3rem;}
 .welcome-hi span{color:var(--gold);}
 .welcome-desc{font-size:13.5px;color:var(--muted);line-height:1.65;margin-bottom:1rem;}
-.days-badge{
-  display:inline-flex;align-items:center;gap:6px;
-  padding:5px 14px;border-radius:99px;
-  font-size:12px;font-weight:700;
-}
+.days-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;border-radius:99px;font-size:12px;font-weight:700;}
 .days-badge .dot{width:6px;height:6px;border-radius:50%;background:currentColor;}
-.green{background:var(--green-dim);color:var(--green);}
-.amber{background:var(--orange-dim);color:var(--orange);}
-.red-b{background:var(--red-dim);color:var(--red);}
+.col-green{background:var(--green-dim);color:var(--green);}
+.col-amber{background:var(--orange-dim);color:var(--orange);}
+.col-red{background:var(--red-dim);color:var(--red);}
 
-/* Summary card */
-.summary-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:var(--r);padding:1.4rem 1.6rem;margin-bottom:1.25rem;
-}
-.summary-card-title{
-  font-size:10.5px;font-weight:800;color:var(--muted);
-  text-transform:uppercase;letter-spacing:.8px;
-  margin-bottom:1rem;display:flex;align-items:center;gap:6px;
-}
-.srow{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:7px 0;border-bottom:1px solid var(--border);font-size:13px;
-}
-.srow:last-child{border-bottom:none;}
-.srow-label{color:var(--muted);}
-.srow-val{font-weight:700;color:var(--text);text-align:right;max-width:60%;}
+/* TIMELINE */
+.timeline-card{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.75rem;margin-bottom:1.25rem;}
+.tl-title{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;margin-bottom:1.5rem;color:var(--text);display:flex;align-items:center;gap:8px;}
+.tl-wrap{position:relative;padding-left:44px;}
+.tl-wrap::before{content:'';position:absolute;left:15px;top:16px;bottom:16px;width:2px;background:linear-gradient(to bottom,var(--gold) 0%,var(--border) 100%);}
+.tl-node{position:relative;margin-bottom:1.5rem;}
+.tl-node:last-child{margin-bottom:0;}
+.tl-dot{position:absolute;left:-44px;top:0;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;border:2px solid var(--border);z-index:1;transition:all .3s;}
+.tl-dot.done{background:var(--green);border-color:var(--green);color:#000;box-shadow:0 0 12px rgba(61,220,132,.35);}
+.tl-dot.active{background:var(--gold);border-color:var(--gold);color:#000;box-shadow:0 0 12px var(--gold-glow);animation:glow 2s ease infinite;}
+.tl-dot.waiting{background:var(--surface2);border-color:var(--border2);color:var(--dim);}
+@keyframes glow{0%,100%{box-shadow:0 0 8px var(--gold-glow)}50%{box-shadow:0 0 22px var(--gold-glow),0 0 40px rgba(232,184,75,.1)}}
+.tl-content{background:var(--surface2);border:1px solid var(--border);border-radius:var(--rsm);padding:1rem 1.2rem;transition:border-color .2s;}
+.tl-node.is-active .tl-content{border-color:rgba(232,184,75,.25);}
+.tl-node.is-done .tl-content{border-color:rgba(61,220,132,.15);}
+.tl-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;}
+.tl-name{font-family:'Nunito',sans-serif;font-size:.88rem;font-weight:800;}
+.tl-date{font-size:11.5px;color:var(--muted);}
+.tl-badge{display:inline-block;margin-top:7px;padding:3px 10px;border-radius:99px;font-size:10.5px;font-weight:700;}
+.badge-done{background:var(--green-dim);color:var(--green);}
+.badge-active{background:var(--gold-dim);color:var(--gold);}
+.badge-wait{background:var(--surface3);color:var(--dim);}
+.tl-days{font-size:11px;color:var(--muted);margin-top:4px;}
 
-/* Status display */
-.status-display{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:6px 14px;border-radius:99px;font-size:12.5px;font-weight:700;
-}
-.status-lodged{background:var(--blue-dim);color:var(--blue);}
-.status-health{background:var(--orange-dim);color:var(--orange);}
-.status-fir{background:var(--orange-dim);color:var(--orange);}
-.status-fis{background:var(--blue-dim);color:var(--blue);}
-.status-granted{background:var(--green-dim);color:var(--green);}
-.status-refused{background:var(--red-dim);color:var(--red);}
+/* Progress bar */
+.prog-wrap{margin-bottom:1.75rem;}
+.prog-label{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.prog-track{height:6px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold),#f5d98b);border-radius:99px;transition:width 1s ease;}
 
-/* Analyse CTA */
-.analyse-wrap{
-  background:linear-gradient(135deg,#150833,#22104a);
-  border:1px solid rgba(167,139,250,.2);
-  border-radius:var(--r);padding:2rem;
-  text-align:center;margin-top:1.5rem;
-}
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1.75rem;}
+.stat-tile{background:var(--surface);border:1px solid var(--border);border-radius:var(--rsm);padding:1rem;text-align:center;}
+.stat-val{font-family:'Nunito',sans-serif;font-size:1.6rem;font-weight:900;line-height:1;}
+.stat-lbl{font-size:10.5px;color:var(--muted);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+
+/* Summary details */
+.detail-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:1.4rem 1.6rem;margin-bottom:1.25rem;}
+.detail-title{font-size:10.5px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:.9rem;}
+.drow{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:13px;}
+.drow:last-child{border-bottom:none;}
+.drow-label{color:var(--muted);}
+.drow-val{font-weight:700;color:var(--text);text-align:right;}
+
+/* Status badge */
+.status-pill{display:inline-flex;align-items:center;gap:7px;padding:7px 16px;border-radius:99px;font-size:13px;font-weight:700;}
+.sp-lodged{background:var(--blue-dim);color:var(--blue);}
+.sp-health{background:var(--orange-dim);color:var(--orange);}
+.sp-fir{background:var(--orange-dim);color:var(--orange);}
+.sp-fis{background:var(--blue-dim);color:var(--blue);}
+.sp-granted{background:var(--green-dim);color:var(--green);}
+.sp-refused{background:var(--red-dim);color:var(--red);}
+
+/* CTA */
+.analyse-wrap{background:linear-gradient(135deg,#150833,#22104a);border:1px solid rgba(167,139,250,.2);border-radius:var(--r);padding:2rem;text-align:center;margin-bottom:1.25rem;}
 .analyse-title{font-family:'Nunito',sans-serif;font-size:1.1rem;font-weight:800;margin-bottom:.4rem;}
 .analyse-sub{font-size:13px;color:var(--muted);margin-bottom:1.5rem;line-height:1.6;}
-.btn-analyse{
-  padding:13px 36px;
-  background:linear-gradient(135deg,#7c3aed,#a78bfa);
-  border:none;border-radius:99px;color:#fff;
-  font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:800;
-  cursor:pointer;transition:all .25s;
-  box-shadow:0 6px 24px rgba(124,58,237,.35);
-  display:inline-flex;align-items:center;gap:8px;
-}
+.btn-analyse{padding:13px 36px;background:linear-gradient(135deg,#7c3aed,#a78bfa);border:none;border-radius:99px;color:#fff;font-family:'Nunito',sans-serif;font-size:13.5px;font-weight:800;cursor:pointer;transition:all .25s;box-shadow:0 6px 24px rgba(124,58,237,.35);display:inline-flex;align-items:center;gap:8px;}
 .btn-analyse:hover{opacity:.88;transform:translateY(-2px);}
 
-.edit-link{
-  display:block;text-align:center;
-  font-size:12.5px;color:var(--dim);cursor:pointer;
-  margin-top:1rem;transition:color .15s;
-}
+/* Share poster button */
+.share-wrap{background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);padding:1.4rem 1.6rem;margin-bottom:1.25rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
+.share-info .share-title{font-family:'Nunito',sans-serif;font-size:.95rem;font-weight:800;margin-bottom:.3rem;}
+.share-info .share-sub{font-size:12.5px;color:var(--muted);}
+.btn-share{padding:10px 22px;background:linear-gradient(135deg,#1877f2,#42a5f5);border:none;border-radius:99px;color:#fff;font-family:'Nunito',sans-serif;font-size:13px;font-weight:800;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:8px;white-space:nowrap;}
+.btn-share:hover{opacity:.88;transform:translateY(-1px);}
+
+.edit-link{display:block;text-align:center;font-size:12.5px;color:var(--dim);cursor:pointer;margin-top:.5rem;transition:color .15s;}
 .edit-link:hover{color:var(--gold);}
+
+/* Hidden canvas for poster */
+#posterCanvas{display:none;}
 
 @media(max-width:560px){
   .fg-grid{grid-template-columns:1fr;}
   .fg.full{grid-column:span 1;}
   .top-nav{padding:1rem 1.25rem;}
   .form-shell,.welcome-shell{padding:6rem 1rem 3rem;}
+  .stats-row{grid-template-columns:1fr 1fr;}
+  .share-wrap{flex-direction:column;align-items:flex-start;}
 }
 </style>
 </head>
 <body>
 
-<!-- ── NAV ── -->
+<!-- NAV -->
 <nav class="top-nav">
-  <a class="nav-logo" href="index.html">
-    <div class="logo-dot"></div>Visa<span>Tracker</span>
-  </a>
+  <a class="nav-logo" href="index.html"><div class="logo-dot"></div>Visa<span>Tracker</span></a>
   <div class="nav-right">
-    <span class="nav-user-name" id="navName"></span>
+    <span class="nav-uname" id="navName"></span>
     <div class="nav-avatar" id="navAvatar">?</div>
     <button class="logout-btn" onclick="doLogout()">Sign out</button>
   </div>
 </nav>
 
-<!-- ════════════════════════════
+<!-- ══════════════════════════════
      FORM PAGE
-════════════════════════════ -->
+══════════════════════════════ -->
 <div class="page active" id="page-form">
   <div class="form-shell">
-    <div class="form-heading">Tell us about your application</div>
-    <div class="form-sub">Just a few details so we can show you accurate comparisons and processing time insights.</div>
+    <div class="form-heading">Your application details</div>
+    <div class="form-sub">Fill in your details so we can show you accurate insights and processing time comparisons.</div>
 
-    <!-- Visa stream locked -->
+    <!-- Locked visa stream -->
     <div class="form-card">
       <div class="form-card-title">🎓 Visa Information</div>
       <div class="fg">
         <label>Visa Stream</label>
-        <div class="locked-field">
-          Higher Education Sector — Subclass 500
-          <span class="locked-badge">🔒 Locked</span>
-        </div>
+        <div class="locked-field">Higher Education Sector — Subclass 500<span class="locked-tag">🔒 Locked</span></div>
       </div>
     </div>
 
-    <!-- Application dates -->
+    <!-- Dates -->
     <div class="form-card">
       <div class="form-card-title">📅 Application Dates</div>
       <div class="fg-grid">
-        <div class="fg">
+
+        <div class="fg full">
           <label>Application lodged date *</label>
           <input type="date" id="lodgeDate" required/>
         </div>
+
         <div class="fg">
-          <label>Visa grant date</label>
-          <div class="grant-row">
-            <input type="date" id="grantDate"/>
-            <button type="button" class="waiting-toggle" id="waitingBtn" onclick="toggleWaiting()">⏳ Still waiting</button>
+          <label>Biometrics date *</label>
+          <div class="date-row">
+            <input type="date" id="bioDate"/>
+            <button type="button" class="sw-btn" id="bioWaitBtn" onclick="toggleSW('bioDate','bioWaitBtn')">⏳ Waiting</button>
           </div>
         </div>
+
+        <div class="fg">
+          <label>Medical examination date *</label>
+          <div class="date-row">
+            <input type="date" id="medDate"/>
+            <button type="button" class="sw-btn" id="medWaitBtn" onclick="toggleSW('medDate','medWaitBtn')">⏳ Waiting</button>
+          </div>
+        </div>
+
+        <div class="fg full">
+          <label>Visa grant date *</label>
+          <div class="date-row">
+            <input type="date" id="grantDate"/>
+            <button type="button" class="sw-btn" id="grantWaitBtn" onclick="toggleSW('grantDate','grantWaitBtn')">⏳ Still waiting</button>
+          </div>
+        </div>
+
       </div>
+      <div style="font-size:11.5px;color:var(--dim);margin-top:10px;">* Click "Waiting" if you haven't reached that stage yet. You must select a date OR click Waiting to proceed.</div>
     </div>
 
     <!-- Location -->
@@ -344,12 +265,8 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
         <div class="fg full">
           <label>Application type *</label>
           <div class="radio-group" id="appTypeGroup">
-            <label class="radio-opt selected" onclick="pick('appTypeGroup',this)">
-              <input type="radio" name="appType" value="offshore" checked/>✈️ Offshore
-            </label>
-            <label class="radio-opt" onclick="pick('appTypeGroup',this)">
-              <input type="radio" name="appType" value="onshore"/>🏠 Onshore
-            </label>
+            <label class="radio-opt sel" onclick="pick('appTypeGroup',this)"><input type="radio" name="appType" value="offshore" checked/>✈️ Offshore</label>
+            <label class="radio-opt" onclick="pick('appTypeGroup',this)"><input type="radio" name="appType" value="onshore"/>🏠 Onshore</label>
           </div>
         </div>
         <div class="fg">
@@ -387,42 +304,30 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
       </div>
     </div>
 
-    <!-- Current status -->
+    <!-- Status -->
     <div class="form-card">
-      <div class="form-card-title">📍 Current Application Status</div>
+      <div class="form-card-title">📍 Current Application Status *</div>
       <div class="fg">
-        <label>Where is your application right now? *</label>
+        <label>Where is your application right now?</label>
         <div class="radio-group" id="statusGroup" style="flex-direction:column;">
-          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
-            <input type="radio" name="currentStatus" value="lodged"/>📬 Lodged — waiting for initial processing
-          </label>
-          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
-            <input type="radio" name="currentStatus" value="health"/>🏥 Health assessment pending
-          </label>
-          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
-            <input type="radio" name="currentStatus" value="fir"/>📄 Further information requested
-          </label>
-          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
-            <input type="radio" name="currentStatus" value="fis"/>✉️ Further information supplied
-          </label>
-          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
-            <input type="radio" name="currentStatus" value="granted"/>✅ Granted
-          </label>
-          <label class="radio-opt full-width" onclick="pick('statusGroup',this)">
-            <input type="radio" name="currentStatus" value="refused"/>❌ Refused
-          </label>
+          <label class="radio-opt fw" onclick="pick('statusGroup',this)"><input type="radio" name="cs" value="lodged"/>📬 Lodged — waiting for initial processing</label>
+          <label class="radio-opt fw" onclick="pick('statusGroup',this)"><input type="radio" name="cs" value="health"/>🏥 Health assessment pending</label>
+          <label class="radio-opt fw" onclick="pick('statusGroup',this)"><input type="radio" name="cs" value="fir"/>📄 Further information requested</label>
+          <label class="radio-opt fw" onclick="pick('statusGroup',this)"><input type="radio" name="cs" value="fis"/>✉️ Further information supplied</label>
+          <label class="radio-opt fw" onclick="pick('statusGroup',this)"><input type="radio" name="cs" value="granted"/>✅ Granted</label>
+          <label class="radio-opt fw" onclick="pick('statusGroup',this)"><input type="radio" name="cs" value="refused"/>❌ Refused</label>
         </div>
       </div>
     </div>
 
-    <div class="form-error" id="formErr">Please fill in all required fields.</div>
+    <div class="form-error" id="formErr"></div>
     <button class="btn-submit" onclick="submitForm()">Save & view my dashboard →</button>
   </div>
 </div>
 
-<!-- ════════════════════════════
-     LOADING PAGE
-════════════════════════════ -->
+<!-- ══════════════════════════════
+     LOADING
+══════════════════════════════ -->
 <div class="page" id="page-loading">
   <div style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;">
     <div class="loading-ring"></div>
@@ -432,49 +337,84 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
     <div class="loading-steps">
       <div class="ls active" id="ls1">💾 Saving your application data</div>
       <div class="ls" id="ls2">📊 Finding similar applications</div>
-      <div class="ls" id="ls3">🗓️ Building your timeline</div>
+      <div class="ls" id="ls3">📅 Building your timeline</div>
       <div class="ls" id="ls4">✅ Almost ready!</div>
     </div>
   </div>
 </div>
 
-<!-- ════════════════════════════
-     WELCOME / SUMMARY PAGE
-════════════════════════════ -->
+<!-- ══════════════════════════════
+     WELCOME / DASHBOARD
+══════════════════════════════ -->
 <div class="page" id="page-welcome">
   <div class="welcome-shell">
 
-    <!-- Hero -->
+    <!-- Hero greeting -->
     <div class="welcome-hero">
       <div class="welcome-tag">🎓 Student Visa · Subclass 500 · Higher Education</div>
       <div class="welcome-hi">Hi, <span id="welcomeName">there</span>!!</div>
       <div class="welcome-desc">Here's a summary of your application. You can update your milestones anytime.</div>
-      <div id="daysBadge" class="days-badge green">
-        <span class="dot"></span>
-        <span id="daysText">Calculating…</span>
+      <div id="daysBadge" class="days-badge col-green"><span class="dot"></span><span id="daysText">Calculating…</span></div>
+    </div>
+
+    <!-- Progress bar -->
+    <div class="prog-wrap">
+      <div class="prog-label">
+        <span>Application lodged</span>
+        <span id="progPct" style="color:var(--gold);font-weight:700;">0%</span>
+        <span>Granted</span>
+      </div>
+      <div class="prog-track"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-tile">
+        <div class="stat-val" id="statDays" style="color:var(--gold);">—</div>
+        <div class="stat-lbl">Days elapsed</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-val" id="statStage" style="color:var(--blue);font-size:1rem;padding-top:.4rem;">—</div>
+        <div class="stat-lbl">Current stage</div>
+      </div>
+      <div class="stat-tile">
+        <div class="stat-val" id="statGrant" style="color:var(--green);">—</div>
+        <div class="stat-lbl">Grant date</div>
       </div>
     </div>
 
-    <!-- Application summary -->
-    <div class="summary-card">
-      <div class="summary-card-title">📋 Application Details</div>
-      <div id="summaryRows"></div>
+    <!-- Timeline -->
+    <div class="timeline-card">
+      <div class="tl-title">📍 Application Timeline</div>
+      <div class="tl-wrap" id="tlWrap"></div>
     </div>
 
-    <!-- Current status -->
-    <div class="summary-card">
-      <div class="summary-card-title">📍 Current Status</div>
-      <div style="padding:.5rem 0;" id="statusDisplay"></div>
+    <!-- Application details -->
+    <div class="detail-card">
+      <div class="detail-title">📋 Application details</div>
+      <div id="detailRows"></div>
     </div>
 
-    <!-- Edit link -->
+    <!-- Edit -->
     <div class="edit-link" onclick="showForm()">✏️ Update my application details</div>
+
+    <!-- Share poster -->
+    <div class="share-wrap" style="margin-top:1.25rem;">
+      <div class="share-info">
+        <div class="share-title">📸 Share your visa journey</div>
+        <div class="share-sub">Download a shareable poster and post it to Facebook or Instagram to help other students find VisaTracker.</div>
+      </div>
+      <button class="btn-share" onclick="generatePoster()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>
+        Download poster
+      </button>
+    </div>
 
     <!-- Analyse CTA -->
     <div class="analyse-wrap">
       <div style="font-size:2rem;margin-bottom:.6rem;">✦</div>
       <div class="analyse-title">Ready to see how you compare?</div>
-      <div class="analyse-sub">We'll analyse your application against similar cases and show you processing time insights, grant probability and more.</div>
+      <div class="analyse-sub">Analyse your application against thousands of similar cases — grant probability, university rankings, country comparisons and more.</div>
       <button class="btn-analyse" onclick="window.location.href='analytics.html'">
         Analyse my data &amp; predict my grant
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -484,224 +424,392 @@ body{font-family:'Nunito Sans',sans-serif;background:var(--black);color:var(--te
   </div>
 </div>
 
+<!-- Hidden canvas for poster generation -->
+<canvas id="posterCanvas" width="1080" height="1080"></canvas>
+
 <script>
-// ══════════════════════════════════════
-//  SUPABASE
-// ══════════════════════════════════════
 const sb = supabase.createClient(
   'https://abtabfagggjpxecxzprc.supabase.co',
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFidGFiZmFnZ2dqcHhlY3h6cHJjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4MTI2ODYsImV4cCI6MjA5MzM4ODY4Nn0.tbUX661ZHCSdtkO_yhKSnNxPxWOBpah7lkVyDEqNBFs'
 );
 
 let currentUser = null;
-let savedData   = null;
-let stillWaiting = false;
+let savedData   = {};
 
-// ══════════════════════════════════════
-//  BOOT
-// ══════════════════════════════════════
+// toggle states per field
+const waiting = { bioDate:false, medDate:false, grantDate:false };
+
+// ── Boot ──
 window.addEventListener('DOMContentLoaded', async () => {
-  const { data: { session } } = await sb.auth.getSession();
-  if (!session?.user) {
-    window.location.href = 'index.html';
-    return;
-  }
+  const { data:{ session } } = await sb.auth.getSession();
+  if (!session?.user){ window.location.href='index.html'; return; }
   currentUser = session.user;
-  setNavUser();
-
-  // Check for existing profile
-  const { data } = await sb
-    .from('student_applications')
-    .select('*')
-    .eq('user_id', currentUser.id)
-    .maybeSingle();
-
-  if (data) {
-    savedData = data;
-    prefillForm(data);
-    showWelcome(data);
-  }
-  // else: stay on form
+  setNav();
+  const { data } = await sb.from('student_applications').select('*').eq('user_id',currentUser.id).maybeSingle();
+  if (data){ savedData=data; prefill(data); showWelcome(data); }
 });
 
-function setNavUser() {
+function setNav(){
   const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
-  const initials = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const ini  = name.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('navName').textContent = name;
-  document.getElementById('navAvatar').textContent = initials;
+  document.getElementById('navAvatar').textContent = ini;
 }
 
-// ══════════════════════════════════════
-//  LOGOUT
-// ══════════════════════════════════════
-async function doLogout() {
-  await sb.auth.signOut();
-  window.location.href = 'index.html';
+async function doLogout(){ await sb.auth.signOut(); window.location.href='index.html'; }
+
+// ── Toggle "still waiting" per date field ──
+function toggleSW(fieldId, btnId){
+  waiting[fieldId] = !waiting[fieldId];
+  const inp = document.getElementById(fieldId);
+  const btn = document.getElementById(btnId);
+  btn.classList.toggle('on', waiting[fieldId]);
+  inp.disabled = waiting[fieldId];
+  if(waiting[fieldId]) inp.value='';
 }
 
-// ══════════════════════════════════════
-//  FORM HELPERS
-// ══════════════════════════════════════
-function pick(groupId, el) {
-  document.querySelectorAll('#' + groupId + ' .radio-opt').forEach(o => o.classList.remove('selected'));
-  el.classList.add('selected');
+// ── Radio select ──
+function pick(gid, el){
+  document.querySelectorAll('#'+gid+' .radio-opt').forEach(o=>o.classList.remove('sel'));
+  el.classList.add('sel');
 }
-function radioVal(name) {
-  const el = document.querySelector(`input[name="${name}"]:checked`);
-  return el ? el.value : null;
-}
-function toggleWaiting() {
-  stillWaiting = !stillWaiting;
-  const btn = document.getElementById('waitingBtn');
-  const inp = document.getElementById('grantDate');
-  btn.classList.toggle('on', stillWaiting);
-  inp.disabled = stillWaiting;
-  if (stillWaiting) inp.value = '';
-}
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0, 0);
-}
-function showForm() { showPage('page-form'); }
-function delay(ms) { return new Promise(r => setTimeout(r, ms)); }
+function radioVal(name){ const el=document.querySelector(`input[name="${name}"]:checked`); return el?el.value:null; }
 
-// Pre-fill form for returning users
-function prefillForm(d) {
-  if (d.lodge_date) document.getElementById('lodgeDate').value = d.lodge_date;
-  if (d.grant_date) document.getElementById('grantDate').value = d.grant_date;
-  if (d.still_waiting) { stillWaiting = true; document.getElementById('waitingBtn').classList.add('on'); document.getElementById('grantDate').disabled = true; }
-  if (d.passport_country) document.getElementById('passportCountry').value = d.passport_country;
-  if (d.applying_from) document.getElementById('applyingFrom').value = d.applying_from;
-  if (d.app_type) {
-    document.querySelectorAll('#appTypeGroup .radio-opt').forEach(o => {
-      const inp = o.querySelector('input');
-      if (inp.value === d.app_type) { o.classList.add('selected'); inp.checked = true; }
-      else { o.classList.remove('selected'); inp.checked = false; }
+function showPage(id){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+function showForm(){ prefill(savedData); showPage('page-form'); }
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+// ── Pre-fill form ──
+function prefill(d){
+  if(!d) return;
+  if(d.lodge_date) document.getElementById('lodgeDate').value=d.lodge_date;
+  ['bioDate','medDate','grantDate'].forEach(fid=>{
+    const key = fid==='bioDate'?'biometrics_date':fid==='medDate'?'medical_date':'grant_date';
+    const wKey = fid==='bioDate'?'bio_waiting':fid==='medDate'?'med_waiting':'still_waiting';
+    if(d[wKey]){ waiting[fid]=true; document.getElementById(fid).disabled=true; document.getElementById(fid.replace('Date','WaitBtn')).classList.add('on'); }
+    else if(d[key]){ document.getElementById(fid).value=d[key]; }
+  });
+  if(d.passport_country) document.getElementById('passportCountry').value=d.passport_country;
+  if(d.applying_from) document.getElementById('applyingFrom').value=d.applying_from;
+  if(d.app_type){
+    document.querySelectorAll('#appTypeGroup .radio-opt').forEach(o=>{
+      const v=o.querySelector('input').value;
+      o.classList.toggle('sel',v===d.app_type);
+      if(v===d.app_type) o.querySelector('input').checked=true;
     });
   }
-  if (d.current_status) {
-    document.querySelectorAll('#statusGroup .radio-opt').forEach(o => {
-      const inp = o.querySelector('input');
-      if (inp.value === d.current_status) { o.classList.add('selected'); inp.checked = true; }
-      else { o.classList.remove('selected'); inp.checked = false; }
+  if(d.current_status){
+    document.querySelectorAll('#statusGroup .radio-opt').forEach(o=>{
+      const v=o.querySelector('input').value;
+      o.classList.toggle('sel',v===d.current_status);
+      if(v===d.current_status) o.querySelector('input').checked=true;
     });
   }
 }
 
-// ══════════════════════════════════════
-//  SUBMIT
-// ══════════════════════════════════════
-async function submitForm() {
-  const errEl = document.getElementById('formErr');
-  errEl.style.display = 'none';
+// ── Validate & Submit ──
+async function submitForm(){
+  const err = document.getElementById('formErr');
+  err.style.display='none';
+  const show = msg=>{ err.textContent=msg; err.style.display='block'; };
 
-  const lodgeDate      = document.getElementById('lodgeDate').value;
-  const grantDate      = document.getElementById('grantDate').value;
-  const passportCountry = document.getElementById('passportCountry').value;
-  const applyingFrom   = document.getElementById('applyingFrom').value;
-  const appType        = radioVal('appType');
-  const currentStatus  = radioVal('currentStatus');
+  const lodgeDate = document.getElementById('lodgeDate').value;
+  const bioDate   = document.getElementById('bioDate').value;
+  const medDate   = document.getElementById('medDate').value;
+  const grantDate = document.getElementById('grantDate').value;
+  const passport  = document.getElementById('passportCountry').value;
+  const from      = document.getElementById('applyingFrom').value;
+  const status    = radioVal('cs');
 
-  if (!lodgeDate)       { errEl.textContent = 'Please enter your application lodged date.'; errEl.style.display='block'; return; }
-  if (!passportCountry) { errEl.textContent = 'Please select your passport country.'; errEl.style.display='block'; return; }
-  if (!applyingFrom)    { errEl.textContent = 'Please select the country you are applying from.'; errEl.style.display='block'; return; }
-  if (!currentStatus)   { errEl.textContent = 'Please select your current application status.'; errEl.style.display='block'; return; }
+  if(!lodgeDate)    { show('Please enter your application lodged date.'); return; }
+  if(!bioDate   && !waiting.bioDate)   { show('Please enter your biometrics date or click "Waiting".'); return; }
+  if(!medDate   && !waiting.medDate)   { show('Please enter your medical examination date or click "Waiting".'); return; }
+  if(!grantDate && !waiting.grantDate) { show('Please enter your visa grant date or click "Still waiting".'); return; }
+  if(!passport) { show('Please select your passport country.'); return; }
+  if(!from)     { show('Please select the country you are applying from.'); return; }
+  if(!status)   { show('Please select your current application status.'); return; }
 
-  // Show loading
   showPage('page-loading');
-
-  // Animate steps
-  const steps = ['ls1','ls2','ls3','ls4'];
-  for (let i = 0; i < steps.length; i++) {
+  const steps=['ls1','ls2','ls3','ls4'];
+  for(let i=0;i<steps.length;i++){
     await delay(1100);
-    if (i > 0) { document.getElementById(steps[i-1]).className='ls done'; }
+    if(i>0) document.getElementById(steps[i-1]).className='ls done';
     document.getElementById(steps[i]).className='ls active';
   }
   await delay(800);
 
-  // Save to Supabase
-  const payload = {
+  const payload={
     user_id: currentUser.id,
     user_email: currentUser.email,
-    visa_subclass: '500',
-    visa_stream: 'higher_education',
+    visa_subclass:'500', visa_stream:'higher_education',
     lodge_date: lodgeDate,
-    grant_date: stillWaiting ? null : (grantDate || null),
-    still_waiting: stillWaiting,
-    app_type: appType || 'offshore',
-    passport_country: passportCountry,
-    applying_from: applyingFrom,
-    current_status: currentStatus,
+    biometrics_date: waiting.bioDate ? null : (bioDate||null),
+    bio_waiting: waiting.bioDate,
+    medical_date: waiting.medDate ? null : (medDate||null),
+    med_waiting: waiting.medDate,
+    grant_date: waiting.grantDate ? null : (grantDate||null),
+    still_waiting: waiting.grantDate,
+    app_type: radioVal('appType')||'offshore',
+    passport_country: passport,
+    applying_from: from,
+    current_status: status,
     updated_at: new Date().toISOString()
   };
 
-  const { error } = await sb
-    .from('student_applications')
-    .upsert(payload, { onConflict: 'user_id' });
-
-  if (error) console.error('Supabase error:', error);
-
+  const { error } = await sb.from('student_applications').upsert(payload,{onConflict:'user_id'});
+  if(error) console.error(error);
   savedData = payload;
   showWelcome(payload);
 }
 
-// ══════════════════════════════════════
-//  WELCOME PAGE
-// ══════════════════════════════════════
-function showWelcome(d) {
+// ── Welcome page builder ──
+function showWelcome(d){
   const name = currentUser.user_metadata?.full_name || currentUser.email.split('@')[0];
   document.getElementById('welcomeName').textContent = name.split(' ')[0];
 
-  // Days elapsed badge
-  if (d.lodge_date) {
-    const days = Math.round((Date.now() - new Date(d.lodge_date)) / 86400000);
-    const badge = document.getElementById('daysBadge');
-    const txt   = document.getElementById('daysText');
-    txt.textContent = `Day ${days} of your application`;
-    badge.className = 'days-badge ' + (days <= 45 ? 'green' : days <= 90 ? 'amber' : 'red-b');
-  }
+  // Days elapsed
+  const elapsed = d.lodge_date ? Math.round((Date.now()-new Date(d.lodge_date))/86400000) : 0;
+  const badge = document.getElementById('daysBadge');
+  badge.className = 'days-badge '+(elapsed<=45?'col-green':elapsed<=90?'col-amber':'col-red');
+  document.getElementById('daysText').textContent = `Day ${elapsed} of your application`;
+  document.getElementById('statDays').textContent = elapsed+'d';
 
-  // Summary rows
-  const statusLabels = {
-    lodged:'📬 Lodged — waiting for processing',
-    health:'🏥 Health assessment pending',
-    fir:'📄 Further information requested',
-    fis:'✉️ Further information supplied',
-    granted:'✅ Granted',
-    refused:'❌ Refused'
-  };
-  const statusClasses = {
-    lodged:'status-lodged',health:'status-health',fir:'status-fir',
-    fis:'status-fis',granted:'status-granted',refused:'status-refused'
-  };
+  // Stage label
+  const stageLabels={lodged:'Lodged',health:'Health Check',fir:'Info Requested',fis:'Info Supplied',granted:'Granted',refused:'Refused'};
+  document.getElementById('statStage').textContent = stageLabels[d.current_status]||'—';
 
-  const rows = [
-    ['Lodged date',    fmtDate(d.lodge_date)],
-    ['Grant date',     d.still_waiting ? '⏳ Still waiting' : (fmtDate(d.grant_date) || '—')],
-    ['Application',    d.app_type === 'onshore' ? '🏠 Onshore' : '✈️ Offshore'],
-    ['Passport',       d.passport_country],
-    ['Applying from',  d.applying_from],
-    ['Visa stream',    'Higher Education Sector'],
+  // Grant date stat
+  document.getElementById('statGrant').textContent = d.still_waiting ? '⏳' : (fmtDate(d.grant_date)||'—');
+
+  // Progress bar
+  const stageOrder={lodged:1,health:2,fir:3,fis:4,granted:5,refused:5};
+  const pct = Math.round(((stageOrder[d.current_status]||1)-1)/4*100);
+  document.getElementById('progFill').style.width = pct+'%';
+  document.getElementById('progPct').textContent = pct+'%';
+
+  // Timeline
+  buildTimeline(d, elapsed);
+
+  // Detail rows
+  const rows=[
+    ['Lodged date', fmtDate(d.lodge_date)],
+    ['Application type', d.app_type==='onshore'?'🏠 Onshore':'✈️ Offshore'],
+    ['Passport country', d.passport_country],
+    ['Applying from', d.applying_from],
+    ['Visa stream', 'Higher Education Sector'],
   ];
-
-  document.getElementById('summaryRows').innerHTML = rows
-    .filter(r => r[1])
-    .map(r => `<div class="srow"><span class="srow-label">${r[0]}</span><span class="srow-val">${r[1]}</span></div>`)
-    .join('');
-
-  // Status display
-  const st = d.current_status || 'lodged';
-  document.getElementById('statusDisplay').innerHTML =
-    `<span class="status-display ${statusClasses[st] || ''}">${statusLabels[st] || st}</span>`;
+  document.getElementById('detailRows').innerHTML = rows.filter(r=>r[1]).map(r=>
+    `<div class="drow"><span class="drow-label">${r[0]}</span><span class="drow-val">${r[1]}</span></div>`
+  ).join('');
 
   showPage('page-welcome');
 }
 
-function fmtDate(ds) {
-  if (!ds) return null;
-  try { return new Date(ds).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'}); }
-  catch { return ds; }
+function buildTimeline(d, elapsed){
+  const nodes=[
+    { name:'Application Lodged',     key:'lodge_date',       wKey:null,           icon:'📬', always:true },
+    { name:'Biometrics Collection',  key:'biometrics_date',  wKey:'bio_waiting',  icon:'🤚' },
+    { name:'Medical Examination',    key:'medical_date',     wKey:'med_waiting',  icon:'🏥' },
+    { name:'Visa Granted',           key:'grant_date',       wKey:'still_waiting',icon:'🎉', refusedKey:'refused' },
+  ];
+
+  // Determine last done index
+  let lastDone = -1;
+  nodes.forEach((n,i)=>{ if(n.always || d[n.key]) lastDone=i; });
+  const activeIdx = (lastDone+1 < nodes.length) ? lastDone+1 : -1;
+
+  document.getElementById('tlWrap').innerHTML = nodes.map((n,i)=>{
+    const isRefused = n.refusedKey && d.current_status==='refused';
+    const dateVal   = d[n.key];
+    const isWaiting = n.wKey ? d[n.wKey] : false;
+    const isDone    = n.always || (dateVal && !isWaiting);
+    const isActive  = !isDone && (i===activeIdx);
+
+    const dotCls  = isDone?'done':isActive?'active':'waiting';
+    const dotIcon = isDone?'✓':isActive?'⏳':'○';
+    const nodeCls = isDone?'is-done':isActive?'is-active':'';
+
+    // Days taken between this and previous done node
+    let daysTaken = '';
+    if(isDone && dateVal && d.lodge_date && n.key!=='lodge_date'){
+      const diff = Math.round((new Date(dateVal)-new Date(d.lodge_date))/86400000);
+      daysTaken = `<div class="tl-days">Day ${diff} from lodgement</div>`;
+    }
+
+    const badge = isDone
+      ? `<span class="tl-badge badge-done">✓ ${fmtDate(dateVal)||'Completed'}</span>`
+      : isWaiting
+      ? `<span class="tl-badge badge-active">⏳ Still waiting</span>`
+      : isActive
+      ? `<span class="tl-badge badge-active">⏳ Current stage</span>`
+      : `<span class="tl-badge badge-wait">Not yet reached</span>`;
+
+    return `
+      <div class="tl-node ${nodeCls}">
+        <div class="tl-dot ${dotCls}">${isRefused&&isDone?'❌':dotIcon}</div>
+        <div class="tl-content">
+          <div class="tl-row">
+            <div class="tl-name">${n.icon} ${isRefused&&n.refusedKey?'Visa Refused':n.name}</div>
+            <div class="tl-date">${dateVal?fmtDate(dateVal):isWaiting?'Still waiting':isActive?'In progress':'Awaiting'}</div>
+          </div>
+          ${badge}${daysTaken}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Facebook Poster Generator ──
+function generatePoster(){
+  const canvas = document.getElementById('posterCanvas');
+  const ctx    = canvas.getContext('2d');
+  const W=1080, H=1080;
+  canvas.width=W; canvas.height=H;
+
+  const d = savedData;
+  const elapsed = d.lodge_date ? Math.round((Date.now()-new Date(d.lodge_date))/86400000) : 0;
+  const status  = {lodged:'Lodged',health:'Health Check',fir:'Info Requested',fis:'Info Supplied',granted:'Granted ✅',refused:'Refused'}[d.current_status]||'In Progress';
+
+  // Background gradient
+  const bg = ctx.createLinearGradient(0,0,W,H);
+  bg.addColorStop(0,'#070709');
+  bg.addColorStop(0.5,'#0e0e1a');
+  bg.addColorStop(1,'#130d20');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // Grid overlay
+  ctx.strokeStyle='rgba(255,255,255,0.03)'; ctx.lineWidth=1;
+  for(let x=0;x<W;x+=60){ ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke(); }
+  for(let y=0;y<H;y+=60){ ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke(); }
+
+  // Glow blob top right
+  const glow = ctx.createRadialGradient(820,200,20,820,200,320);
+  glow.addColorStop(0,'rgba(232,184,75,0.12)'); glow.addColorStop(1,'transparent');
+  ctx.fillStyle=glow; ctx.fillRect(0,0,W,H);
+
+  // Glow blob bottom left
+  const glow2 = ctx.createRadialGradient(200,850,20,200,850,280);
+  glow2.addColorStop(0,'rgba(167,139,250,0.1)'); glow2.addColorStop(1,'transparent');
+  ctx.fillStyle=glow2; ctx.fillRect(0,0,W,H);
+
+  // Logo area
+  // Gold dot
+  ctx.beginPath(); ctx.arc(72,72,8,0,Math.PI*2);
+  ctx.fillStyle='#e8b84b'; ctx.fill();
+  ctx.shadowColor='#e8b84b'; ctx.shadowBlur=16; ctx.fill(); ctx.shadowBlur=0;
+
+  ctx.font='800 38px sans-serif'; ctx.fillStyle='#f0f0f5'; ctx.textAlign='left';
+  ctx.fillText('Visa', 92,87);
+  ctx.fillStyle='#e8b84b'; ctx.fillText('Tracker', 92+ctx.measureText('Visa').width+6, 87);
+
+  // Top badge pill
+  const pill='🎓 Student Visa · Subclass 500';
+  ctx.font='600 22px sans-serif';
+  const pillW=ctx.measureText(pill).width+32;
+  roundRect(ctx, 72, 110, pillW, 40, 20,'rgba(232,184,75,0.12)','rgba(232,184,75,0.25)');
+  ctx.fillStyle='#e8b84b'; ctx.font='700 20px sans-serif'; ctx.textAlign='left';
+  ctx.fillText(pill, 88, 135);
+
+  // Main headline
+  ctx.font='900 82px sans-serif'; ctx.fillStyle='#f0f0f5'; ctx.textAlign='left';
+  ctx.fillText('Day ' + elapsed, 72, 280);
+  ctx.font='700 38px sans-serif'; ctx.fillStyle='#8888a0';
+  ctx.fillText('of my visa journey', 72, 330);
+
+  // Status pill large
+  const statusColors={lodged:'#4a9eff',health:'#ff8c42',fir:'#ff8c42',fis:'#4a9eff',granted:'#3ddc84',refused:'#ff5555'};
+  const sc = statusColors[d.current_status]||'#e8b84b';
+  ctx.font='700 26px sans-serif';
+  const sw = ctx.measureText('📍 ' + status).width + 40;
+  roundRect(ctx,72,360,sw,50,25,sc+'22',sc+'55');
+  ctx.fillStyle=sc; ctx.fillText('📍 ' + status, 92, 393);
+
+  // Divider line
+  ctx.strokeStyle='rgba(255,255,255,0.08)'; ctx.lineWidth=1.5;
+  ctx.beginPath(); ctx.moveTo(72,440); ctx.lineTo(W-72,440); ctx.stroke();
+
+  // Timeline visual (simplified 4-node)
+  const nodes=[
+    {label:'Lodged',         date:d.lodge_date,        waiting:false},
+    {label:'Biometrics',     date:d.biometrics_date,   waiting:d.bio_waiting},
+    {label:'Medical',        date:d.medical_date,       waiting:d.med_waiting},
+    {label:'Granted',        date:d.grant_date,         waiting:d.still_waiting},
+  ];
+  const tlX=72, tlY=480, nodeGap=220;
+  // Connecting line
+  ctx.strokeStyle='rgba(255,255,255,0.1)'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(tlX+20,tlY+20); ctx.lineTo(tlX+20+(nodes.length-1)*nodeGap,tlY+20); ctx.stroke();
+
+  nodes.forEach((n,i)=>{
+    const nx=tlX+i*nodeGap;
+    const isDone = n.date && !n.waiting;
+    const isWait = n.waiting;
+    const dotColor = isDone?'#3ddc84':isWait?'#e8b84b':'#242432';
+    const dotBorder= isDone?'#3ddc84':isWait?'#e8b84b':'#55556a';
+    // Circle
+    ctx.beginPath(); ctx.arc(nx+20,tlY+20,18,0,Math.PI*2);
+    ctx.fillStyle=dotColor; ctx.fill();
+    ctx.strokeStyle=dotBorder; ctx.lineWidth=2; ctx.stroke();
+    // Icon inside
+    ctx.font='16px sans-serif'; ctx.textAlign='center';
+    ctx.fillStyle='#000';
+    ctx.fillText(isDone?'✓':isWait?'⏳':'○',nx+20,tlY+26);
+    // Label
+    ctx.font='700 20px sans-serif'; ctx.fillStyle='#f0f0f5'; ctx.textAlign='center';
+    ctx.fillText(n.label,nx+20,tlY+58);
+    // Date or status
+    ctx.font='600 16px sans-serif'; ctx.fillStyle= isDone?'#3ddc84':isWait?'#e8b84b':'#55556a';
+    ctx.fillText(isDone?fmtDateShort(n.date):isWait?'Waiting':'Pending',nx+20,tlY+80);
+  });
+
+  // Big CTA section
+  ctx.fillStyle='rgba(167,139,250,0.08)';
+  roundRect(ctx,72,620,W-144,280,20,'rgba(124,58,237,0.12)','rgba(167,139,250,0.2)');
+
+  ctx.font='800 40px sans-serif'; ctx.fillStyle='#f0f0f5'; ctx.textAlign='center';
+  ctx.fillText('Track your visa journey too!', W/2, 690);
+
+  ctx.font='600 26px sans-serif'; ctx.fillStyle='#a78bfa';
+  ctx.fillText('Free community-powered Australian visa tracker', W/2, 735);
+
+  ctx.font='700 30px sans-serif'; ctx.fillStyle='#e8b84b';
+  ctx.fillText('🌏 visatracker.com.au', W/2, 800);
+
+  ctx.font='600 22px sans-serif'; ctx.fillStyle='#55556a';
+  ctx.fillText('Processing times · Community data · AI-powered insights', W/2, 845);
+
+  // QR placeholder (just a styled box)
+  roundRect(ctx,W/2-50,870,100,80,8,'rgba(255,255,255,0.05)','rgba(255,255,255,0.1)');
+  ctx.font='600 18px sans-serif'; ctx.fillStyle='#55556a'; ctx.textAlign='center';
+  ctx.fillText('visatracker.com.au',W/2,920);
+
+  // Bottom footer
+  ctx.font='600 20px sans-serif'; ctx.fillStyle='#45455a'; ctx.textAlign='center';
+  ctx.fillText('Made with ❤️ by the Australian student visa community', W/2, 1040);
+
+  // Download
+  const link=document.createElement('a');
+  link.download='VisaTracker-poster.png';
+  link.href=canvas.toDataURL('image/png');
+  link.click();
+}
+
+function roundRect(ctx,x,y,w,h,r,fill,stroke){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+  if(fill){ctx.fillStyle=fill;ctx.fill();}
+  if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=1.5;ctx.stroke();}
+}
+
+function fmtDate(ds){
+  if(!ds)return null;
+  try{return new Date(ds).toLocaleDateString('en-AU',{day:'numeric',month:'short',year:'numeric'});}catch{return ds;}
+}
+function fmtDateShort(ds){
+  if(!ds)return '';
+  try{return new Date(ds).toLocaleDateString('en-AU',{day:'numeric',month:'short'});}catch{return ds;}
 }
 </script>
 </body>
